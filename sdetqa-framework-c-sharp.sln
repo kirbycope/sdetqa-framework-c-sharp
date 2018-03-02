@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsForDesktop", "TestsFor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsForMobile", "TestsForMobile\TestsForMobile.csproj", "{E0917725-68B1-4DC3-8CA5-F058AC29A80E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsForApi", "TestsForApi\TestsForApi.csproj", "{24E4D5C0-CE1E-4B15-84EB-C88B132891E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkApi", "FrameworkApi\FrameworkApi.csproj", "{8205958C-74AC-4E23-85F8-63103BBC93C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{E0917725-68B1-4DC3-8CA5-F058AC29A80E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0917725-68B1-4DC3-8CA5-F058AC29A80E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0917725-68B1-4DC3-8CA5-F058AC29A80E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24E4D5C0-CE1E-4B15-84EB-C88B132891E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24E4D5C0-CE1E-4B15-84EB-C88B132891E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24E4D5C0-CE1E-4B15-84EB-C88B132891E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24E4D5C0-CE1E-4B15-84EB-C88B132891E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8205958C-74AC-4E23-85F8-63103BBC93C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8205958C-74AC-4E23-85F8-63103BBC93C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8205958C-74AC-4E23-85F8-63103BBC93C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8205958C-74AC-4E23-85F8-63103BBC93C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
