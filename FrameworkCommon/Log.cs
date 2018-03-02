@@ -78,7 +78,15 @@ namespace FrameworkCommon
             else if (destination == "context")
             {
                 // Get the "log" from the current TestContext
-                string log = TestContext.Get("log").ToString();
+                string log = "";
+                try
+                {
+                    log = TestContext.Get("log").ToString();
+                }
+                catch
+                {
+                    /* do nothing */
+                }
                 // Add the new "log line" to the "log"
                 log = log + value;
                 // Save the new log

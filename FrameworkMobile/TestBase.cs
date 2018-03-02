@@ -4,6 +4,7 @@ using NUnit.Framework;
 using OpenQA.Selenium.Appium;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -82,17 +83,39 @@ namespace FrameworkMobile
             // Perform the action
             try
             {
+                // Create a variable to serve as a flag for if a new session needs to be created or not
+                bool createNewSession = false;
                 // Create a variable to hold the Test's WebDriver
-                AppiumDriver<AppiumWebElement> driver;
-                // Use existing session
-                if (Session.driver != null)
+                AppiumDriver<AppiumWebElement> driver = null;
+                // Is the global WebDriver varaiable set?
+                if ((Session.driver != null))
                 {
-                    driver = Session.driver;
+                    // Is there session info?
+                    Dictionary<string, object> sessionInfo = null;
+                    try { sessionInfo = Session.driver.SessionDetails; }
+                    catch { /* do nothing */ }
+                    if (sessionInfo != null)
+                    {
+                        // Use the existing session
+                        Log.WriteLine(logPadding.InfoPadding + "[INFO] Using the existing session.");
+                        driver = Session.driver;
+                    }
+                    else
+                    {
+                        // Set the flag to create a new session to true
+                        createNewSession = true;
+                    }
                 }
-                //  Create a new session
-                else
+                // Should we create a new session?
+                if (createNewSession == true)
                 {
-                    Log.WriteLine(logPadding.InfoPadding + "[INFO] Using an existing session.");
+                    // Wait 60 seconds to kill the current session (in SauceLab's TestObject)
+                    if (ConfigurationManager.AppSettings["appConfig"].ToString().Contains("SauceLabs"))
+                    {
+                        Sleep.Milliseconds(60000, "Waiting 60 seconds to kill the current session (in SauceLab's TestObject).");
+                    }
+                    // Create a new session
+                    Log.WriteLine(logPadding.InfoPadding + "[INFO] Creating a new session.");
                     driver = Session.Create();
                 }
                 // Save a reference to the current Test's driver in its TestContext
