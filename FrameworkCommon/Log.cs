@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Reflection;
 using System.Text;
 
 namespace FrameworkCommon
@@ -18,6 +21,54 @@ namespace FrameworkCommon
                 }
                 return _destination;
             }
+        }
+
+        /// <summary>
+        /// Logs a select few Attributes (defined in this method and in FrameworkCommon.Attributes).
+        /// </summary>
+        /// <param name="customAttributeDatas">The Attributes to parse.</param>
+        public static void CustomAttributes(IEnumerable<CustomAttributeData> customAttributeDatas)
+        {
+            // Parse the collection
+            CustomAttributeData descriptionAttribute = null;
+            CustomAttributeData automatesAttribute = null;
+            CustomAttributeData automatedByAttribute = null;
+            foreach (CustomAttributeData customAttributeData in customAttributeDatas)
+            {
+                // Convert the object to JSON for easy parsing
+                JObject jObject = JObject.FromObject(customAttributeData);
+                // Check each CustomAttributeData for a value containing "NUnit.Framework.DescriptionAttribute"
+                foreach (var kvp in jObject)
+                {
+                    // Console.WriteLine("{0}: {1}", kvp.Key, kvp.Value);
+                    if (kvp.Value.ToString().Contains("NUnit.Framework.DescriptionAttribute"))
+                    {
+                        descriptionAttribute = customAttributeData;
+                    }
+                    else if (kvp.Value.ToString().Contains(".Automates"))
+                    {
+                        automatesAttribute = customAttributeData;
+                    }
+                    else if (kvp.Value.ToString().Contains(".AutomatedBy"))
+                    {
+                        automatedByAttribute = customAttributeData;
+                    }
+                    // Stop parsing if we have found what we were looking for
+                    if ((descriptionAttribute != null) && (automatesAttribute != null))
+                    {
+                        break;
+                    }
+                }
+            }
+            // Log the current Test's [Description("")]
+            try { Log.WriteLine("[INFO] Test Description: " + descriptionAttribute.ConstructorArguments[0].Value.ToString()); }
+            catch { /* do nothing */ }
+            // Log the current Test's [Automates("")]
+            try { Log.WriteLine("[INFO] Test Automates: " + automatesAttribute.ConstructorArguments[0].Value.ToString()); }
+            catch { /* do nothing */ }
+            // Log the current Test's [AutomatedBy("")]
+            try { Log.WriteLine("[INFO] Test AutomatedBy: " + automatedByAttribute.ConstructorArguments[0].Value.ToString()); }
+            catch { /* do nothing */ }
         }
 
         /// <summary>

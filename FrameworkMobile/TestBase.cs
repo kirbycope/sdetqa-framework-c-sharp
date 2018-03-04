@@ -1,5 +1,4 @@
 ﻿using FrameworkCommon;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium.Appium;
 using System;
@@ -30,46 +29,8 @@ namespace FrameworkMobile
 
             // Get the Test's custom Attributes
             IEnumerable<CustomAttributeData> customAttributeDatas = new StackTrace().GetFrame(1).GetMethod().CustomAttributes;
-            // Parse the collection
-            CustomAttributeData descriptionAttribute = null;
-            CustomAttributeData automatesAttribute = null;
-            CustomAttributeData automatedByAttribute = null;
-            foreach (CustomAttributeData customAttributeData in customAttributeDatas)
-            {
-                // Convert the object to JSON for easy parsing
-                JObject jObject = JObject.FromObject(customAttributeData);
-                // Check each CustomAttributeData for a value containing "NUnit.Framework.DescriptionAttribute"
-                foreach (var kvp in jObject)
-                {
-                    // Console.WriteLine("{0}: {1}", kvp.Key, kvp.Value);
-                    if (kvp.Value.ToString().Contains("NUnit.Framework.DescriptionAttribute"))
-                    {
-                        descriptionAttribute = customAttributeData;
-                    }
-                    else if (kvp.Value.ToString().Contains(".Automates"))
-                    {
-                        automatesAttribute = customAttributeData;
-                    }
-                    else if (kvp.Value.ToString().Contains(".AutomatedBy"))
-                    {
-                        automatedByAttribute = customAttributeData;
-                    }
-                    // Stop parsing if we have found what we were looking for
-                    if ((descriptionAttribute != null) && (automatesAttribute != null))
-                    {
-                        break;
-                    }
-                }
-            }
-            // Log the current Test's [Description("")]
-            try { Log.WriteLine("[INFO] Test Description: " + descriptionAttribute.ConstructorArguments[0].Value.ToString()); }
-            catch { /* do nothing */ }
-            // Log the current Test's [Automates("")]
-            try { Log.WriteLine("[INFO] Test Automates: " + automatesAttribute.ConstructorArguments[0].Value.ToString()); }
-            catch { /* do nothing */ }
-            // Log the current Test's [AutomatedBy("")]
-            try { Log.WriteLine("[INFO] Test AutomatedBy: " + automatedByAttribute.ConstructorArguments[0].Value.ToString()); }
-            catch { /* do nothing */ }
+            // Log the custom Attributes
+            Log.CustomAttributes(customAttributeDatas);
             // Write an end-line
             Log.WriteLine();
 
@@ -109,11 +70,8 @@ namespace FrameworkMobile
                 // Should we create a new session?
                 if (createNewSession == true)
                 {
-                    // Wait 60 seconds to kill the current session (in SauceLab's TestObject)
-                    if (ConfigurationManager.AppSettings["appConfig"].ToString().Contains("SauceLabs"))
-                    {
-                        Sleep.Milliseconds(60000, "Waiting 60 seconds to kill the current session (in SauceLab's TestObject).");
-                    }
+                    // Wait 60 seconds to kill the current session (the default TimeOut for Appium)
+                    Sleep.Milliseconds(60000, "Waiting 60 seconds to kill the current session.");
                     // Create a new session
                     Log.WriteLine(logPadding.InfoPadding + "[INFO] Creating a new session.");
                     driver = Session.Create();
@@ -173,7 +131,7 @@ namespace FrameworkMobile
                 // Logging - After action
                 Log.Finally("");
 
-                // Print log to console (for Visual Studio and Bamboo)
+                // Print this Test's log (from "TestContext") to the system console
                 string log = TestContext.Get("log").ToString();
                 if (log.Length > 0)
                 {

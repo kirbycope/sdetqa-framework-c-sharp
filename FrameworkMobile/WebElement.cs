@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using Assert = FrameworkCommon.Assert;
-using TestContext = FrameworkCommon.TestContext;
 
 namespace FrameworkMobile
 {

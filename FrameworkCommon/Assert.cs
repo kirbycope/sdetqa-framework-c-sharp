@@ -236,7 +236,7 @@ namespace FrameworkCommon
             // Logging - Before action
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(logPadding.Padding + "Assert.IsFalse(condition, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Condition:" + condition);
+            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Condition: " + condition);
             sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
             Log.Write(sb.ToString());
             // Perform the action
@@ -269,7 +269,7 @@ namespace FrameworkCommon
             // Logging - Before action
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(logPadding.Padding + "Assert.IsTrue(condition, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Condition:" + condition);
+            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Condition: " + condition);
             sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
             Log.Write(sb.ToString());
             // Perform the action
