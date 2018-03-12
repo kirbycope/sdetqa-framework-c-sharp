@@ -36,7 +36,7 @@ namespace FrameworkApi
             TestContext.Set("log", "");
 
             // Get the Base Address
-            string baseAddress = ConfigurationManager.AppSettings["baseAddress"];
+            string baseAddress = ConfigurationManager.AppSettings["baseAddress"] ?? "";
 
             // Get the Test's custom Attributes
             IEnumerable<CustomAttributeData> customAttributeDatas = new StackTrace().GetFrame(1).GetMethod().CustomAttributes;
