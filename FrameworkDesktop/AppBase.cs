@@ -1049,7 +1049,11 @@ namespace FrameworkDesktop
                 // Setup the wait
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(TestBase.defaultTimeoutInSeconds));
                 // Wait until condition is met
-                wait.Until(ExpectedConditions.UrlContains(text));
+                wait.Until<Func<IWebDriver, bool>>(
+                    d => {
+                        return (driver) => { return driver.Url.ToLowerInvariant().Contains(text.ToLowerInvariant()); };
+                    }
+                );
                 // Logging - After action success
                 Log.Success(logPadding.Padding);
             }

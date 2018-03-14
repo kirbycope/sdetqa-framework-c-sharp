@@ -1277,7 +1277,11 @@ namespace FrameworkDesktop
             {
                 // Wait for this element to exist
                 WebDriverWait wait = new WebDriverWait(this.driver, TimeSpan.FromSeconds(TestBase.defaultTimeoutInSeconds));
-                wait.Until(ExpectedConditions.ElementExists(this.by));
+                wait.Until<Func<IWebDriver, IWebElement>>(
+                    d => {
+                        return (driver) => { return driver.FindElement(by); };
+                    }
+                );
                 // Logging - After action success
                 Log.Success(logPadding.Padding);
             }
@@ -1381,7 +1385,29 @@ namespace FrameworkDesktop
                 if (this.by != null)
                 {
                     WebDriverWait wait = new WebDriverWait(this.driver, TimeSpan.FromSeconds(TestBase.defaultTimeoutInSeconds));
-                    wait.Until(ExpectedConditions.ElementToBeClickable(this.by));
+                    wait.Until<Func<IWebDriver, IWebElement>>(
+                    d => {
+                        return (driver) =>
+                        {
+                            var element = ElementIfVisible(driver.FindElement(by));
+                            try
+                            {
+                                if (element != null && element.Enabled)
+                                {
+                                    return element;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                            catch (StaleElementReferenceException)
+                            {
+                                return null;
+                            }
+                        };
+                    }
+                );
                 }
                 else
                 {
@@ -1551,7 +1577,22 @@ namespace FrameworkDesktop
                 // Wait until the element is "visible"
                 TimeSpan timeout = TimeSpan.FromSeconds(TestBase.defaultTimeoutInSeconds);
                 WebDriverWait wait = new WebDriverWait(this.driver, timeout);
-                wait.Until(ExpectedConditions.ElementIsVisible(this.by));
+                wait.Until<Func<IWebDriver, IWebElement>>(
+                    d =>
+                    {
+                        return (driver) =>
+                        {
+                            try
+                            {
+                                return ElementIfVisible(driver.FindElement(by));
+                            }
+                            catch (StaleElementReferenceException)
+                            {
+                                return null;
+                            }
+                        };
+                    }
+                );
                 // Logging - After action success
                 Log.Success(logPadding.Padding);
             }
@@ -1635,5 +1676,10 @@ namespace FrameworkDesktop
         }
 
         #endregion Custom SeleniumWebElement Methods
+
+        private static IWebElement ElementIfVisible(IWebElement element)
+        {
+            return element.Displayed ? element : null;
+        }
     }
 }

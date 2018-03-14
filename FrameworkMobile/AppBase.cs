@@ -986,7 +986,21 @@ namespace FrameworkMobile
             {
                 // Perform the action
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeOutInSeconds));
-                wait.Until(ExpectedConditions.ElementIsVisible(by));
+                wait.Until<Func<IWebDriver, IWebElement>>(
+                    d => {
+                        return (driver) =>
+                        {
+                            try
+                            {
+                                return ElementIfVisible(driver.FindElement(by));
+                            }
+                            catch (StaleElementReferenceException)
+                            {
+                                return null;
+                            }
+                        };
+                    }    
+                );
                 // Logging - After action success
                 Log.Success(logPadding.Padding);
             }
@@ -1083,7 +1097,30 @@ namespace FrameworkMobile
             {
                 // Perform the wait
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeOutInSeconds));
-                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(by));
+                wait.Until<Func<IWebDriver, bool>>(
+                    d => {
+                        return (driver) =>
+                        {
+                            try
+                            {
+                                var element = driver.FindElement(by);
+                                return !element.Displayed;
+                            }
+                            catch (NoSuchElementException)
+                            {
+                                // Returns true because the element is not present in DOM. The
+                                // try block checks if the element is present but is invisible.
+                                return true;
+                            }
+                            catch (StaleElementReferenceException)
+                            {
+                                // Returns true because stale element reference implies that element
+                                // is no longer visible.
+                                return true;
+                            }
+                        };
+                    }
+                );
                 // Logging - After action success
                 Log.Success(logPadding.Padding);
             }
@@ -1160,5 +1197,11 @@ namespace FrameworkMobile
         }
 
         #endregion Custom App Methods
+
+        // https://github.com/DotNetSeleniumTools/DotNetSeleniumExtras/blob/master/src/WaitHelpers/ExpectedConditions.cs
+        private static IWebElement ElementIfVisible(IWebElement element)
+        {
+            return element.Displayed ? element : null;
+        }
     }
 }

@@ -64,6 +64,8 @@ namespace FrameworkApi
                 }
                 // Save that to the test context
                 TestContext.Set("httpClient", httpClient);
+                // Logging - After action success
+                Log.Success(logPadding.Padding);
             }
             catch (Exception e)
             {
