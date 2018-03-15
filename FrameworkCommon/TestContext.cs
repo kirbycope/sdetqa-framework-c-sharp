@@ -15,7 +15,7 @@
         /// </summary>
         public static void Set(string key, object value)
         {
-            NUnit.Framework.TestContext.CurrentContext.Test.Properties.Set(key, value);
+            NUnit.Framework.Internal.TestExecutionContext.CurrentContext.CurrentTest.Properties.Set(key, value);
         }
     }
 }

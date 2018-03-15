@@ -1,0 +1,2 @@
+cd C:\Selenium
+java -Dwebdriver.chrome.driver=C:\Selenium\chromedriver.exe -Dwebdriver.edge.driver=C:\Selenium\MicrosoftWebDriver.exe -Dwebdriver.gecko.driver=C:\Selenium\geckodriver.exe -Dwebdriver.ie.driver=C:\Selenium\IEDriverServer.exe -jar selenium-server-standalone-3.11.0.jar -role node -nodeConfig node.json

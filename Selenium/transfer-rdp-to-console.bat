@@ -1,0 +1,1 @@
+%windir%\system32\tscon.exe 2 /dest:console
