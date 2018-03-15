@@ -499,7 +499,9 @@ namespace FrameworkDesktop
             // Perform the action
             try
             {
-                if (useBaseUrl == true)
+                // Get the base URL from the test's Context
+                string baseUrl = (string)TestContext.Get("baseUrl");
+                if ( (useBaseUrl == true) && (baseUrl.Length > 0) )
                 {
                     // If the given URL does not start with a "/"
                     if (url.StartsWith("/") == false)
@@ -507,8 +509,6 @@ namespace FrameworkDesktop
                         // Prepand the URL with a "/"
                         url = "/" + url;
                     }
-                    // Get the base URL from the test's Context
-                    string baseUrl = (string)TestContext.Get("baseUrl");
                     // Logging - Before action
                     sb.AppendLine(logPadding.InfoPadding + "[INFO] Base URL: " + baseUrl);
                     // If the base URL ends with a "/"

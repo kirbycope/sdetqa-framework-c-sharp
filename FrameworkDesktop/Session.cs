@@ -27,9 +27,9 @@ namespace FrameworkDesktop
             // Declare a string for the Base URL
             string baseUrl = ConfigurationManager.AppSettings["baseUrl"];
             // Define the Browser (from the App.config)
-            string browser = ConfigurationManager.AppSettings["browser"];
+            string browser = ConfigurationManager.AppSettings["browser"] ?? "chrome";
             // Define the Grid Hub URI (from the App.config)
-            Uri hubUri = new Uri(ConfigurationManager.AppSettings["hubUri"]);
+            Uri hubUri = new Uri(ConfigurationManager.AppSettings["hubUri"] ?? "http://localhost:4444/wd/hub");
             // Define the Screenshot folder (from the App.config)
             string screenshotFolder = ConfigurationManager.AppSettings["screenshotFolder"];
 
