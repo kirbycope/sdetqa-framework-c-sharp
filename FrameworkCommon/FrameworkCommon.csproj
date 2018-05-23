@@ -81,6 +81,7 @@
     <Compile Include="Toolbox\FileUtils.cs" />
     <Compile Include="Toolbox\HttpUtils.cs" />
     <Compile Include="Toolbox\JsonUtils.cs" />
+    <Compile Include="Toolbox\SqlUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

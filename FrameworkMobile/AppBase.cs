@@ -1,6 +1,7 @@
 ﻿using FrameworkCommon;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Appium.MultiTouch;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
@@ -55,8 +56,6 @@ namespace FrameworkMobile
             {
                 // Logging - After action exception
                 sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
             }
             finally
             {
@@ -323,8 +322,15 @@ namespace FrameworkMobile
             {
                 for (int i = 0; i < swipes; i++)
                 {
-                    // Swipe using the given values
-                    driver.Swipe(startX, startY, endX, endY, duration);
+                    // Define and perform the Touch Action
+                    TouchAction touchAction = new TouchAction(driver);
+                    touchAction
+                        .Press(startX, startY)
+                        .Wait(duration)
+                        .MoveTo(endX, endY)
+                        .Wait(duration)
+                        .Release()
+                        .Perform();
                     // Wait a moment
                     System.Threading.Thread.Sleep(500);
                 }

@@ -55,7 +55,6 @@ namespace FrameworkApi
             // Perform the action
             try
             {
-                
                 // Create a new instance of the httpclient
                 HttpClient httpClient = new HttpClient();
                 if (baseAddress.Length > 0)
