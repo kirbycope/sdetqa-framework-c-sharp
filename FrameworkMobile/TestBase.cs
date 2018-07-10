@@ -4,9 +4,6 @@ using OpenQA.Selenium.Appium;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text;
 using Assert = FrameworkCommon.Assert;
 using TestContext = FrameworkCommon.TestContext;
 

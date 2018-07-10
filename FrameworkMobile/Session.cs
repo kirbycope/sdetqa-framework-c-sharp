@@ -6,8 +6,6 @@ using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
-using System.Diagnostics;
-using System.Text;
 using Assert = FrameworkCommon.Assert;
 
 namespace FrameworkMobile
