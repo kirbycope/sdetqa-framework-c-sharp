@@ -4,10 +4,8 @@ using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Interactions.Internal;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.Specialized;
 using System.Drawing;
-using System.Text;
-using Assert = FrameworkCommon.Assert;
 
 namespace FrameworkMobile
 {
@@ -36,7 +34,7 @@ namespace FrameworkMobile
             {
                 if (_element == null)
                 {
-                    _element = AppBase.driver.FindElement(this.by);
+                    _element = AppBase.Driver.FindElement(this.by);
                 }
                 return _element;
             }
@@ -99,37 +97,34 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 ICoordinates returnValue = null;
-                // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.Coordinates");
-                if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-                if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     // Get the coordinates identifying the location of this element using various frames of reference
                     returnValue = this.element.Coordinates;
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
-                    Log.WriteLine(logPadding.InfoPadding + "[INFO] Coordinates " + returnValue);
+                    Log.Success("Coordinates " + returnValue);
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
-                    // Fail current Test
-                    Assert.Fail(sb.ToString());
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    Assert.Fail(e.Message);
                 }
                 finally
                 {
                     // Logging - After action
-                    Log.Finally(logPadding.Padding);
+                    Log.Finally();
                 }
                 // Return the return value
                 return returnValue;
@@ -143,33 +138,35 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 bool returnValue = false;
-                // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.Displayed");
-                if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-                if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     // Get a value indicating whether or not this element is displayed
                     returnValue = this.element.Displayed;
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
+                    Log.Success("Displayed: " + returnValue);
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    //Assert.Fail(e.Message); // Not being able to tell if the element is displayed is the same as it not being displayed
                 }
-                // Logging - After action
-                Log.WriteLine(logPadding.InfoPadding + "[INFO] Displayed: " + returnValue);
-                Log.Finally(logPadding.Padding);
+                finally
+                {
+                    // Logging - After action
+                    Log.Finally();
+                }
                 // Return the return value
                 return returnValue;
             }
@@ -182,37 +179,34 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 bool returnValue = false;
-                // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.Enabled");
-                if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-                if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     // Get a value indicating whether or not this element is enabled
                     returnValue = this.element.Enabled;
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
-                    Log.WriteLine(logPadding.InfoPadding + "[INFO] Enabled: " + returnValue);
+                    Log.Success("Enabled: " + returnValue);
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
-                    // Fail current Test
-                    Assert.Fail(sb.ToString());
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    Assert.Fail(e.Message);
                 }
                 finally
                 {
                     // Logging - After action
-                    Log.Finally(logPadding.Padding);
+                    Log.Finally();
                 }
                 // Return the return value
                 return returnValue;
@@ -226,37 +220,34 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 string returnValue = "";
-                // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.Id");
-                if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-                if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     // Get the ID of this element
                     returnValue = this.element.Id;
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
-                    Log.WriteLine(logPadding.InfoPadding + "[INFO] ID: " + returnValue);
+                    Log.Success("ID: " + returnValue);
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
-                    // Fail current Test
-                    Assert.Fail(sb.ToString());
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    Assert.Fail(e.Message);
                 }
                 finally
                 {
                     // Logging - After action
-                    Log.Finally(logPadding.Padding);
+                    Log.Finally();
                 }
                 // Return the return value
                 return returnValue;
@@ -271,37 +262,34 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 Point returnValue = new Point();
-                // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.Location");
-                if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-                if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     // Get a System.Drawing.Point object containing the coordinates of the upper-left corner of this element relative to the upper-left corner of the page
                     returnValue = this.element.Location;
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
-                    Log.WriteLine(logPadding.InfoPadding + "[INFO] Location " + returnValue);
+                    Log.Success("Location " + returnValue);
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
-                    // Fail current Test
-                    Assert.Fail(sb.ToString());
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    Assert.Fail(e.Message);
                 }
                 finally
                 {
                     // Logging - After action
-                    Log.Finally(logPadding.Padding);
+                    Log.Finally();
                 }
                 // Return the return value
                 return returnValue;
@@ -315,37 +303,34 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 bool returnValue = false;
-                // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.Selected");
-                if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-                if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     // Get a value indicating whether or not this element is selected
                     returnValue = this.element.Selected;
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
-                    Log.WriteLine(logPadding.InfoPadding + "[INFO] Selected: " + returnValue);
+                    Log.Success("Selected: " + returnValue);
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
-                    // Fail current Test
-                    Assert.Fail(sb.ToString());
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    Assert.Fail(e.Message);
                 }
                 finally
                 {
                     // Logging - After action
-                    Log.Finally(logPadding.Padding);
+                    Log.Finally();
                 }
                 // Return the return value
                 return returnValue;
@@ -359,37 +344,34 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 Size returnValue = new Size();
-                // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.Size");
-                if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-                if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     // Get a OpenQA.Selenium.Remote.RemoteWebElement.Size object containing the height and width of this element
                     returnValue = this.element.Size;
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
-                    Log.WriteLine(logPadding.InfoPadding + "[INFO] Size " + returnValue);
+                    Log.Success("Size " + returnValue);
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
-                    // Fail current Test
-                    Assert.Fail(sb.ToString());
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    Assert.Fail(e.Message);
                 }
                 finally
                 {
                     // Logging - After action
-                    Log.Finally(logPadding.Padding);
+                    Log.Finally();
                 }
                 // Return the return value
                 return returnValue;
@@ -403,37 +385,35 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 string returnValue = "";
                 // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.TagName");
-                if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-                if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     // Get the tag name of this element
                     returnValue = this.element.TagName;
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
-                    Log.WriteLine(logPadding.InfoPadding + "[INFO] Tag Name " + returnValue);
+                    Log.Success("Tag Name " + returnValue);
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
-                    // Fail current Test
-                    Assert.Fail(sb.ToString());
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    Assert.Fail(e.Message);
                 }
                 finally
                 {
                     // Logging - After action
-                    Log.Finally(logPadding.Padding);
+                    Log.Finally();
                 }
                 // Return the return value
                 return returnValue;
@@ -447,37 +427,34 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 string returnValue = "";
-                // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.Text");
-                if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-                if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     // Get the innerText of this element, without any leading or trailing whitespace, and with other whitespace collapsed
                     returnValue = this.element.Text;
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
-                    Log.WriteLine(logPadding.InfoPadding + "[INFO] Text " + returnValue);
+                    Log.Success("Text " + returnValue);
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
-                    // Fail current Test
-                    Assert.Fail(sb.ToString());
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    Assert.Fail(e.Message);
                 }
                 finally
                 {
                     // Logging - After action
-                    Log.Finally(logPadding.Padding);
+                    Log.Finally();
                 }
                 // Return the return value
                 return returnValue;
@@ -493,34 +470,31 @@ namespace FrameworkMobile
         /// </summary>
         public void Clear()
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "WebElement.Clear()");
-            if (this.description != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-            if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Finds By: " + this.by); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "webElement.description", this.description },
+                { "webElement.by", this.by }
+            });
+
             // Perform the action
             try
             {
                 // Clear the content of this element.
                 this.element.Clear();
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
@@ -531,18 +505,16 @@ namespace FrameworkMobile
         /// <returns>The first matching WebElement on the current context.</returns>
         public WebElement FindElement(By by)
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
             // Declare an empty object to hold the return value
             WebElement returnValue = null;
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "WebElement.FindElement(by)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Element To Find Finds By: " + by);
-            if (this.description != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-            if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Finds By: " + this.by); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "webElement.description", this.description },
+                { "webElement.by", this.by },
+                { "FindBy", by }
+            });
+
             // Perform the action
             try
             {
@@ -553,19 +525,19 @@ namespace FrameworkMobile
                     this.element.FindElement(by)
                 );
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
             // Return the return value
             return returnValue;
@@ -578,18 +550,16 @@ namespace FrameworkMobile
         /// <returns>A ReadOnlyCollection of all WebElements matching the current criteria, or an empty list if nothing matches.</returns>
         public IList<WebElement> FindElements(By by)
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
             // Declare an empty object to hold the return value
             IList<WebElement> returnValue = new List<WebElement>();
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "WebElement.FindElements(by)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Element(s) To Find Finds By: " + by);
-            if (this.description != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-            if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Finds By: " + this.by); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "webElement.description", this.description },
+                { "webElement.by", this.by },
+                { "FindBy", by }
+            });
+
             // Perform the action
             try
             {
@@ -606,20 +576,19 @@ namespace FrameworkMobile
                     returnValue.Add(webElement);
                 }
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.WriteLine(logPadding.InfoPadding + "[INFO] Elements Found: " + returnValue.Count);
+                Log.Success("Elements Found: " + returnValue.Count);
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
             // Return the return value
             return returnValue;
@@ -632,38 +601,35 @@ namespace FrameworkMobile
         /// <returns>The attribute's current value. Returns a null if the value is not set.</returns>
         public string GetAttribute(string attributeName)
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
             // Declare an empty object to hold the return value
             string returnValue = null;
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "WebElement.GetAttribute(attributeName)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Attribute Name: " + attributeName);
-            if (this.description != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-            if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Finds By: " + this.by); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "webElement.description", this.description },
+                { "webElement.by", this.by },
+                { "Attribute Name", attributeName }
+            });
+
             // Perform the action
             try
             {
                 // Get the value of the given attribute name
                 returnValue = this.element.GetAttribute(attributeName);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.WriteLine(logPadding.InfoPadding + "[INFO] Attribute Value: " + returnValue);
+                Log.Success("Attribute Value: " + returnValue);
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
             // Return the return value
             return returnValue;
@@ -676,38 +642,35 @@ namespace FrameworkMobile
         /// <returns>The value of the specified CSS property.</returns>
         public string GetCssValue(string propertyName)
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
             // Declare an empty object to hold the return value
             string returnValue = null;
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "WebElement.GetCssValue(propertyName)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Property Name: " + propertyName);
-            if (this.description != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-            if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Finds By: " + this.by); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.WriteLine(sb.ToString());
+
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "webElement.description", this.description },
+                { "webElement.by", this.by },
+                { "Property Name", propertyName}
+            });
+
             // Perform the action
             try
             {
                 // Get the value of the given CSS property
                 returnValue = this.element.GetCssValue(propertyName);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.WriteLine(logPadding.InfoPadding + "[INFO] CSS Property Value: " + returnValue);
+                Log.Success("Property Value: " + returnValue);
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
             // Return the return value
             return returnValue;
@@ -720,38 +683,35 @@ namespace FrameworkMobile
         /// <returns>The JavaScript property's current value. Returns a null if the value is not set or the property does not exist.</returns>
         public string GetProperty(string propertyName)
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
             // Declare an empty object to hold the return value
             string returnValue = null;
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "WebElement.GetProperty(propertyName)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Property Name: " + propertyName);
-            if (this.description != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-            if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Finds By: " + this.by); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "webElement.description", this.description },
+                { "webElement.by", this.by },
+                { "Property Name", propertyName }
+            });
+
             // Perform the action
             try
             {
                 // Get the value of a JavaScript property of this element.
                 returnValue = this.element.GetProperty(propertyName);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.WriteLine(logPadding.InfoPadding + "[INFO] Property Value: " + returnValue);
+                Log.Success("Property Value: " + returnValue);
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
             // Return the return value
             return returnValue;
@@ -763,35 +723,32 @@ namespace FrameworkMobile
         /// <param name="text">The text to type into the element.</param>
         public void SendKeys(string text)
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "WebElement.SendKeys(text)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Keys to Send: " + text);
-            if (this.description != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-            if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Finds By: " + this.by); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "webElement.description", this.description },
+                { "webElement.by", this.by },
+                { "Text", text }
+            });
+
             // Perform the action
             try
             {
                 // Simulate typing text into the element
                 this.element.SendKeys(text);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
@@ -800,34 +757,31 @@ namespace FrameworkMobile
         /// </summary>
         public void Submit()
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "WebElement.Submit()");
-            if (this.description != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-            if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Finds By: " + this.by); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "webElement.description", this.description },
+                { "webElement.by", this.by }
+            });
+
             // Perform the action
             try
             {
                 // Submit this form
                 this.element.Submit();
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
@@ -837,34 +791,31 @@ namespace FrameworkMobile
         /// </summary>
         public void Tap()
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "WebElement.Tap()");
-            if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-            if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "webElement.description", this.description },
+                { "webElement.by", this.by }
+            });
+
             // Perform the action
             try
             {
                 // Tap the center of the given element
                 this.element.Tap(1, 250);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
@@ -880,43 +831,40 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 string returnValue = "";
-                // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.Label");
-                if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-                if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     if (this.by != null)
                     {
-                        returnValue = AppBase.driver.FindElement(this.by).GetAttribute("content-desc");
+                        returnValue = AppBase.Driver.FindElement(this.by).GetAttribute("content-desc");
                     }
                     else
                     {
                         returnValue = this.element.GetAttribute("content-desc");
                     }
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
-                    Log.WriteLine(logPadding.InfoPadding + "[INFO] Label: " + returnValue);
+                    Log.Success("Label: " + returnValue);
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
-                    // Fail current Test
-                    Assert.Fail(sb.ToString());
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    Assert.Fail(e.Message);
                 }
                 finally
                 {
                     // Logging - After action
-                    Log.Finally(logPadding.Padding);
+                    Log.Finally();
                 }
                 // Return the return value
                 return returnValue;
@@ -930,40 +878,37 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 WebElement returnValue = null;
-                // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.Parent");
-                string description = "Parent element of: ";
-                if (this.description.Length > 0) { description = description + this.description; }
-                else if (this.by != null) { description = description + this.by.ToString(); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     returnValue = new WebElement
                     (
-                        AppBase.driver.FindElement(this.by).FindElement(By.XPath("//..")),
+                        AppBase.Driver.FindElement(this.by).FindElement(By.XPath("//..")),
                         description
                     );
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
+                    Log.Success();
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
-                    // Fail current Test
-                    Assert.Fail(sb.ToString());
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    Assert.Fail(e.Message);
                 }
                 finally
                 {
                     // Logging - After action
-                    Log.Finally(logPadding.Padding);
+                    Log.Finally();
                 }
                 // Return the return value
                 return returnValue;
@@ -977,40 +922,37 @@ namespace FrameworkMobile
         {
             get
             {
-                // Figure out the padding (if any) to prepend to the log line
-                LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
                 // Declare a return value
                 WebElement returnValue = null;
-                // Logging - Before action
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(logPadding.Padding + "WebElement.Sibling");
-                string description = "Sibling element of: ";
-                if (this.description.Length > 0) { description = description + this.description; }
-                else if (this.by != null) { description = description + this.by.ToString(); }
-                sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-                Log.Write(sb.ToString());
+
+                // Log Before Action
+                Log.BeforeAction(new OrderedDictionary() {
+                    { "webElement.description", this.description },
+                    { "webElement.by", this.by }
+                });
+
                 // Perform the action
                 try
                 {
                     returnValue = new WebElement
                     (
-                        AppBase.driver.FindElement(this.by).FindElement(By.XPath("//following-sibling::*")),
+                        AppBase.Driver.FindElement(this.by).FindElement(By.XPath("//following-sibling::*")),
                         description
                     );
                     // Logging - After action success
-                    Log.Success(logPadding.Padding);
+                    Log.Success();
                 }
                 catch (Exception e)
                 {
                     // Logging - After action exception
-                    sb = Log.Exception(sb, e);
-                    // Fail current Test
-                    Assert.Fail(sb.ToString());
+                    Log.Failure(e.Message);
+                    // Fail current test
+                    Assert.Fail(e.Message);
                 }
                 finally
                 {
                     // Logging - After action
-                    Log.Finally(logPadding.Padding);
+                    Log.Finally();
                 }
                 // Return the return value
                 return returnValue;
@@ -1027,15 +969,12 @@ namespace FrameworkMobile
         /// </summary>
         public void WaitForElement()
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "WebElement.WaitForElement()");
-            if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-            if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "webElement.description", this.description },
+                { "webElement.by", this.by }
+            });
+
             // Perform the action
             try
             {
@@ -1048,37 +987,33 @@ namespace FrameworkMobile
                     AppBase.WaitForElementToBeDisplayed(this.element);
                 }
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
         /// <summary>
         /// Wait function that will repeatly query the app until a matching element is not found.
-        /// Throws a System.TimeoutException if no element is found within the time limit.
         /// </summary>
         public void WaitForElementNotDisplayed()
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "WebElement.WaitForElementNotDisplayed()");
-            if (this.description.Length > 0) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Description: " + this.description); }
-            if (this.by != null) { sb.AppendLine(logPadding.InfoPadding + "[INFO] Element Find By: " + this.by); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "webElement.description", this.description },
+                { "webElement.by", this.by }
+            });
+
             // Perform the action
             try
             {
@@ -1091,19 +1026,19 @@ namespace FrameworkMobile
                     AppBase.WaitForElementToBeNotDisplayed(this.element);
                 }
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 

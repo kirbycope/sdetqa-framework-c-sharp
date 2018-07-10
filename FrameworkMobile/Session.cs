@@ -4,6 +4,7 @@ using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Remote;
 using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Diagnostics;
 using System.Text;
@@ -20,30 +21,29 @@ namespace FrameworkMobile
         /// </summary>
         public static AppiumDriver<AppiumWebElement> Create()
         {
-            #region Properties
+            #region Properties  (from the App.config)
 
             // Get settings from the App.config
             string app = ConfigurationManager.AppSettings["app"];
-            string appConfig = ConfigurationManager.AppSettings["appConfig"];
+            string appConfig = ConfigurationManager.AppSettings["appConfig"] ?? "App.config";
             string automationName = ConfigurationManager.AppSettings["automationName"];
-            string deviceName = ConfigurationManager.AppSettings["deviceName"];
+            string deviceName = ConfigurationManager.AppSettings["deviceName"] ?? "n/a";
             Uri hubUri = new Uri(ConfigurationManager.AppSettings["hubUri"]);
             string platformName = ConfigurationManager.AppSettings["platformName"];
 
-            #endregion Properties
+            #endregion Properties  (from the App.config)
 
             // Declare a return value
             AppiumDriver<AppiumWebElement> returnValue = null;
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Session.Create()");
-            sb.AppendLine(logPadding.InfoPadding + "[INFO] Automation Name: " + automationName);
-            sb.AppendLine(logPadding.InfoPadding + "[INFO] Platform Name: " + platformName);
-            sb.AppendLine(logPadding.InfoPadding + "[INFO] Device Name: " + deviceName);
-            sb.AppendLine(logPadding.InfoPadding + "[INFO] App: " + app);
-            Log.Write(sb.ToString());
+
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "Automation Name", automationName },
+                { "Platform Name", platformName },
+                { "Device Name", automationName },
+                { "App", app}
+            });
+
             // Perform the action
             try
             {
@@ -70,20 +70,19 @@ namespace FrameworkMobile
                 // Set the global driver variable
                 driver = returnValue;
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.WriteLine(logPadding.InfoPadding + "[INFO] Created a new session.");
+                Log.Success("Created a new session.");
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
             // Return the return value
             return returnValue;

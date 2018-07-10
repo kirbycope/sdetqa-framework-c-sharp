@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Text;
+using System.Collections.Specialized;
 
 namespace FrameworkCommon
 {
@@ -16,35 +15,31 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure.</param>
         public static void AreEqual(object expected, object actual, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.AreEqual(expected, actual, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Expected: " + expected);
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Actual: " + actual);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "Expected", expected },
+                { "Actual", actual }
+            });
+
             // Perform the action
             try
             {
                 // Verify that two objects are equal
                 NUnit.Framework.Assert.AreEqual(expected, actual);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                sb = Log.Exception(sb, e);
+                Log.Failure(message, e);
                 // Fail current Test
-                Fail(sb.ToString());
+                Assert.Fail("[ERROR] Exception: " + e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
@@ -56,35 +51,31 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure.</param>
         public static void AreNotEqual(object expected, object actual, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.AreNotEqual(expected, actual, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Expected: " + expected);
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Actual: " + actual);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "Expected", expected },
+                { "Actual", actual }
+            });
+
             // Perform the action
             try
             {
                 // Verify that two objects are not equal
                 NUnit.Framework.Assert.AreNotEqual(expected, actual);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                sb = Log.Exception(sb, e);
+                Log.Failure(message, e);
                 // Fail current Test
-                Fail(sb.ToString());
+                Assert.Fail("[ERROR] Exception: " + e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
@@ -96,30 +87,25 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure.</param>
         public static void ContainsText(string expected, string actual, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.ContainsText(expected, actual, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Expected: " + expected);
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Actual: " + actual);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "Expected", expected },
+                { "Actual", actual }
+            });
+
             // Perform the action
             if (actual.Trim().ToLower().Contains(expected.Trim().ToLower()))
             {
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.Finally(logPadding.Padding);
+                Log.Success();
+                Log.Finally();
             }
             else
             {
                 // Logging - After action exception
-                sb.AppendLine(logPadding.InfoPadding + "[Result] Failure!");
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                Log.WriteLine(sb.ToString());
-                Log.WriteLine("");
-                Fail(sb.ToString());
+                Log.Failure(message);
+                // Fail current test
+                Assert.Fail(message);
             }
         }
 
@@ -131,33 +117,28 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure.</param>
         public static void Greater(object arg1, object arg2, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.Greater(arg1, arg2, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] arg1: " + arg1);
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] arg2: " + arg2);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "arg1", arg1 },
+                { "arg2", arg2 }
+            });
+
             // Perform the action
             if (double.Parse(arg1.ToString()) > double.Parse(arg2.ToString()))
             {
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.Finally(logPadding.Padding);
+                Log.Success();
+                Log.Finally();
             }
             else
             {
                 // Logging - After action exception
-                sb.AppendLine(logPadding.InfoPadding + "[Result] Failure!");
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                Log.WriteLine(sb.ToString());
-                Log.WriteLine("");
-                Fail(sb.ToString());
+                Log.Failure(message);
+                // Fail current test
+                Assert.Fail(message);
             }
         }
-        
+
         /// <summary>
         /// Assert that a string is empty - that is equal to string.Empty.
         /// </summary>
@@ -165,29 +146,24 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure</param>
         public static void IsEmpty(string aString, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.IsEmpty(aString, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] String: " + aString);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "String", aString }
+            });
+
             // Perform the action
             if (aString == string.Empty)
             {
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.Finally(logPadding.Padding);
+                Log.Success();
+                Log.Finally();
             }
             else
             {
                 // Logging - After action exception
-                sb.AppendLine(logPadding.InfoPadding + "[Result] Failure!");
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                Log.WriteLine(sb.ToString());
-                Log.WriteLine("");
-                Fail(sb.ToString());
+                Log.Failure(message);
+                // Fail current test
+                Assert.Fail(message);
             }
         }
 
@@ -198,32 +174,27 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure.</param>
         public static void IsNotEmpty(string aString, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.IsNotEmpty(aString, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] String: " + aString);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "String", aString }
+            });
+
             // Perform the action
             if (aString != string.Empty)
             {
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.Finally(logPadding.Padding);
+                Log.Success();
+                Log.Finally();
             }
             else
             {
                 // Logging - After action exception
-                sb.AppendLine(logPadding.InfoPadding + "[Result] Failure!");
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                Log.WriteLine(sb.ToString());
-                Log.WriteLine("");
-                Fail(sb.ToString());
+                Log.Failure(message);
+                // Fail current test
+                Assert.Fail(message);
             }
         }
-        
+
         /// <summary>
         /// Asserts that a condition is false.
         /// </summary>
@@ -231,29 +202,24 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure.</param>
         public static void IsFalse(bool condition, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.IsFalse(condition, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Condition: " + condition);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "Condition", condition }
+            });
+
             // Perform the action
             if (condition == false)
             {
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.Finally(logPadding.Padding);
+                Log.Success();
+                Log.Finally();
             }
             else
             {
                 // Logging - After action exception
-                sb.AppendLine(logPadding.InfoPadding + "[Result] Failure!");
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                Log.WriteLine(sb.ToString());
-                Log.WriteLine("");
-                Fail(sb.ToString());
+                Log.Failure(message);
+                // Fail current test
+                Assert.Fail(message);
             }
         }
 
@@ -264,29 +230,24 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure.</param>
         public static void IsTrue(bool condition, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.IsTrue(condition, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Condition: " + condition);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "Condition", condition }
+            });
+
             // Perform the action
             if (condition)
             {
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.Finally(logPadding.Padding);
+                Log.Success();
+                Log.Finally();
             }
             else
             {
                 // Logging - After action exception
-                sb.AppendLine(logPadding.InfoPadding + "[Result] Failure!");
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                Log.WriteLine(sb.ToString());
-                Log.WriteLine("");
-                Fail(sb.ToString());
+                Log.Failure(message);
+                // Fail current test
+                Assert.Fail(message);
             }
         }
 
@@ -297,28 +258,24 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure.</param>
         public static void IsNull(object anObject, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.IsNull(anObject, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "anObject", anObject }
+            });
+
             // Perform the action
             if (anObject == null)
             {
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.Finally(logPadding.Padding);
+                Log.Success();
+                Log.Finally();
             }
             else
             {
                 // Logging - After action exception
-                sb.AppendLine(logPadding.InfoPadding + "[Result] Failure!");
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                Log.WriteLine(sb.ToString());
-                Log.WriteLine("");
-                Fail(sb.ToString());
+                Log.Failure(message);
+                // Fail current test
+                Assert.Fail(message);
             }
         }
 
@@ -329,28 +286,24 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure.</param>
         public static void IsNotNull(object anObject, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.IsNotNull(anObject, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "anObject", anObject }
+            });
+
             // Perform the action
             if (anObject != null)
             {
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.Finally(logPadding.Padding);
+                Log.Success();
+                Log.Finally();
             }
             else
             {
                 // Logging - After action exception
-                sb.AppendLine(logPadding.InfoPadding + "[Result] Failure!");
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                Log.WriteLine(sb.ToString());
-                Log.WriteLine("");
-                Fail(sb.ToString());
+                Log.Failure(message);
+                // Fail current test
+                Assert.Fail(message);
             }
         }
 
@@ -362,30 +315,25 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure.</param>
         public static void Less(object arg1, object arg2, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.Less(arg1, arg2, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] arg1: " + arg1);
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] arg2: " + arg2);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "arg1", arg1 },
+                { "arg2", arg2 }
+            });
+
             // Perform the action
             if (double.Parse(arg1.ToString()) < double.Parse(arg2.ToString()))
             {
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.Finally(logPadding.Padding);
+                Log.Success();
+                Log.Finally();
             }
             else
             {
                 // Logging - After action exception
-                sb.AppendLine(logPadding.InfoPadding + "[Result] Failure!");
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                Log.WriteLine(sb.ToString());
-                Log.WriteLine("");
-                Fail(sb.ToString());
+                Log.Failure(message);
+                // Fail current test
+                Assert.Fail(message);
             }
         }
 
@@ -396,29 +344,24 @@ namespace FrameworkCommon
         /// <param name="message">The message to display in case of failure.</param>
         public static void NotZero(object value, string message = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Assert.NotZero(actual, message?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Actual: " + value);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "Value", value }
+            });
+
             // Perform the action
             if (double.Parse(value.ToString()) == 0)
             {
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
-                Log.Finally(logPadding.Padding);
+                Log.Success();
+                Log.Finally();
             }
             else
             {
                 // Logging - After action exception
-                sb.AppendLine(logPadding.InfoPadding + "[Result] Failure!");
-                if (message != "") { sb.AppendLine(logPadding.InfoPadding + "[INFO] Message: " + message); }
-                Log.WriteLine(sb.ToString());
-                Log.WriteLine("");
-                Fail(sb.ToString());
+                Log.Failure(message);
+                // Fail current test
+                Assert.Fail(message);
             }
         }
 
@@ -433,10 +376,6 @@ namespace FrameworkCommon
         /// <param name="message">The message to initialize the NUnit.Framework.AssertionException with.</param>
         public static void Fail(string message = "")
         {
-            if (TestContext.Get("Automates") != null)
-            {
-                message = message + Environment.NewLine + "    [INFO] Automates: " + TestContext.Get("Automates").ToString();
-            }
             NUnit.Framework.Assert.Fail(message);
         }
 

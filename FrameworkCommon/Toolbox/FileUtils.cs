@@ -59,7 +59,6 @@ namespace FrameworkCommon.Toolbox
         /// <summary>
         /// Deletes the contents of the current user's "Downloads" folder
         /// </summary>
-        /// <returns></returns>
         public static void DeleteDownloads()
         {
             // Get the default downloads folder for the current user

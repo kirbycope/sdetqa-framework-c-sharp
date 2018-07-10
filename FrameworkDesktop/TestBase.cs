@@ -2,10 +2,6 @@
 using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text;
 using Assert = FrameworkCommon.Assert;
 using TestContext = FrameworkCommon.TestContext;
 
@@ -51,20 +47,12 @@ namespace FrameworkDesktop
             // Save a reference to the current Test's log in its TestContext
             TestContext.Set("log", "");
 
-            // Get the Test's custom Attributes
-            IEnumerable<CustomAttributeData> customAttributeDatas = new StackTrace().GetFrame(1).GetMethod().CustomAttributes;
-            // Log the custom Attributes
-            Log.CustomAttributes(customAttributeDatas);
-            // Write an end-line
-            Log.WriteLine();
+            // Log the test attributes of the current [Test]
+            Log.StandardAttributes();
 
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "TestBase.Setup()");
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction();
+
             // Perform the action
             try
             {
@@ -78,32 +66,28 @@ namespace FrameworkDesktop
                 AppBase.DeleteAllCookies();
 
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
         [TearDown]
         public void TearDown()
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "TestBase.TearDown()");
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction();
+
             // Perform the action
             try
             {
@@ -116,21 +100,20 @@ namespace FrameworkDesktop
                 // Quit this driver, closing every associated window.
                 AppBase.Quit();
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally("");
-
-                // Print this Test's log (from "TestContext") to the system console
+                Log.Finally();
+                // Print log to console (for Visual Studio and Bamboo)
                 string log = TestContext.Get("log").ToString();
                 if (log.Length > 0)
                 {

@@ -1,8 +1,7 @@
 ﻿using FrameworkCommon;
 using System;
-using System.Diagnostics;
+using System.Collections.Specialized;
 using System.Net.Http;
-using System.Text;
 using TestContext = FrameworkCommon.TestContext;
 
 namespace FrameworkApi
@@ -37,16 +36,13 @@ namespace FrameworkApi
         {
             // Declare an empty object to hold the return value
             HttpResponseMessage returnValue = null;
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "AppBase.MakeRequest(method, requestUri, content?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Method: " + method);
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Request URI: " + requestUri);
-            //sb.AppendLine(logPadding.InfoPadding + "[PARAM] HTTP Content: " + content);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "Method", method },
+                { "Request URI", requestUri }
+            });
+
             // Perform the action
             try
             {
@@ -60,19 +56,19 @@ namespace FrameworkApi
                 // Make the request and return the result
                 returnValue = httpClient.SendAsync(httpRequestMessage).Result;
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
             // Return HTTP Response
             return returnValue;

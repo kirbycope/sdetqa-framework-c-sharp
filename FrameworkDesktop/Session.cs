@@ -7,9 +7,8 @@ using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Safari;
 using System;
+using System.Collections.Specialized;
 using System.Configuration;
-using System.Diagnostics;
-using System.Text;
 
 namespace FrameworkDesktop
 {
@@ -27,9 +26,9 @@ namespace FrameworkDesktop
             // Declare a string for the Base URL
             string baseUrl = ConfigurationManager.AppSettings["baseUrl"];
             // Define the Browser (from the App.config)
-            string browser = ConfigurationManager.AppSettings["browser"] ?? "chrome";
+            string browser = ConfigurationManager.AppSettings["browser"];
             // Define the Grid Hub URI (from the App.config)
-            Uri hubUri = new Uri(ConfigurationManager.AppSettings["hubUri"] ?? "http://localhost:4444/wd/hub");
+            Uri hubUri = new Uri(ConfigurationManager.AppSettings["hubUri"]);
             // Define the Screenshot folder (from the App.config)
             string screenshotFolder = ConfigurationManager.AppSettings["screenshotFolder"];
 
@@ -37,17 +36,16 @@ namespace FrameworkDesktop
 
             // Declare a return value
             IWebDriver returnValue = null;
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Session.Create()");
-            sb.AppendLine(logPadding.InfoPadding + "[INFO] App Config: " + appConfig);
-            sb.AppendLine(logPadding.InfoPadding + "[INFO] Base URL: " + baseUrl);
-            sb.AppendLine(logPadding.InfoPadding + "[INFO] Browser: " + browser);
-            sb.AppendLine(logPadding.InfoPadding + "[INFO] Hub URI: " + hubUri);
-            sb.AppendLine(logPadding.InfoPadding + "[INFO] Screenshot Folder: " + screenshotFolder);
-            Log.Write(sb.ToString());
+
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "App Config", appConfig },
+                { "Base URL", baseUrl },
+                { "Browser", browser },
+                { "Hub URI", hubUri },
+                { "Screenshot Folder", screenshotFolder }
+            });
+
             // Perform the action
             try
             {
@@ -68,7 +66,7 @@ namespace FrameworkDesktop
                     catch
                     {
                         // Write result to log
-                        Log.WriteLine(logPadding.InfoPadding + "[WARNING] Unable to create a remote session, so creating a local one.");
+                        Log.WriteLine("    [WARNING] Unable to create a remote session, so creating a local one.");
                         // Create a local session
                         returnValue = new InternetExplorerDriver(options);
                     }
@@ -89,7 +87,7 @@ namespace FrameworkDesktop
                     catch
                     {
                         // Write result to log
-                        Log.WriteLine(logPadding.InfoPadding + "[WARNING] Unable to create a remote session, so creating a local one.");
+                        Log.WriteLine("    [WARNING] Unable to create a remote session, so creating a local one.");
                         // Create a local session
                         returnValue = new ChromeDriver(options);
                     }
@@ -108,7 +106,7 @@ namespace FrameworkDesktop
                     catch
                     {
                         // Write result to log
-                        Log.WriteLine(logPadding.InfoPadding + "[WARNING] Unable to create a remote session, so creating a local one.");
+                        Log.WriteLine("    [WARNING] Unable to create a remote session, so creating a local one.");
                         // Create a local session
                         returnValue = new EdgeDriver(options);
                     }
@@ -127,7 +125,7 @@ namespace FrameworkDesktop
                     catch
                     {
                         // Write result to log
-                        Log.WriteLine(logPadding.InfoPadding + "[WARNING] Unable to create a remote session, so creating a local one.");
+                        Log.WriteLine("    [WARNING] Unable to create a remote session, so creating a local one.");
                         try
                         {
                             // Create a local session
@@ -136,10 +134,10 @@ namespace FrameworkDesktop
                         catch
                         {
                             // Write result to log
-                            Log.WriteLine(logPadding.InfoPadding + "[WARNING] Unable to create a local session using the default location.");
+                            Log.WriteLine("    [WARNING] Unable to create a local session using the default location.");
                             // Load Firefox From Specific Location
                             options.BrowserExecutableLocation = @"C:\Program Files\Mozilla Firefox\firefox.exe";
-                            Log.WriteLine(logPadding.InfoPadding + "[INFO] Browser Executable Location: " + options.BrowserExecutableLocation);
+                            Log.WriteLine("    [INFO] Browser Executable Location: " + options.BrowserExecutableLocation);
                             // Create a local session
                             returnValue = new FirefoxDriver(options);
                         }
@@ -165,20 +163,19 @@ namespace FrameworkDesktop
                 TestContext.Set("screenshotFolder", screenshotFolder);
 
                 // Logging - After action
-                Log.Success(logPadding.Padding);
-                Log.Finally(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
             // Return the return value
             return returnValue;

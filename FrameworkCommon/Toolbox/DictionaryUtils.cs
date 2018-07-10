@@ -9,7 +9,7 @@ namespace FrameworkCommon.Toolbox
         /// </summary>
         /// <param name="dictionary">The Dictionary to parse.</param>
         /// <param name="key">The key for the value being retrieved.</param>
-        /// <returns></returns>
+        /// <returns>To Value represented as a string.</returns>
         public static string GetValueString(Dictionary<string, object> dictionary, string key)
         {
             string value = "";

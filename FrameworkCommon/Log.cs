@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Configuration;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 
@@ -24,6 +27,34 @@ namespace FrameworkCommon
         }
 
         /// <summary>
+        /// Logs the 'Before Action' info (The method being called and it's properties/parameters).
+        /// </summary>
+        /// <param name="properties">(Optional) A collection of properties to log ("Method Name" and "Stack Caller" are automatically generated so do not include).</param>
+        public static void BeforeAction(OrderedDictionary properties = null)
+        {
+            // Get the padding (if any) to prepend to the log line
+            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(2).GetMethod().ReflectedType);
+            // Get the method name (of the method that called this one) from the stack
+            string methodName = new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()";
+            // Get that method's caller from the stack
+            string stackCaller = new StackTrace().GetFrame(2).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(2).GetMethod().Name + "()";
+
+            // Write the method name
+            Log.WriteLine(logPadding.Padding + methodName);
+            if (properties != null)
+            {
+                // Parse the Dictionary (for properties of the method being logged)
+                foreach (DictionaryEntry entry in properties)
+                {
+                    // Write the property to the log
+                    Log.WriteLine(logPadding.InfoPadding + "[INFO] " + entry.Key + " : " + entry.Value);
+                }
+            }
+            // Write the stack caller to the log
+            Log.WriteLine(logPadding.InfoPadding + "[STACK] Caller: " + stackCaller);
+        }
+
+        /// <summary>
         /// Logs a select few Attributes (defined in this method and in FrameworkCommon.Attributes).
         /// </summary>
         /// <param name="customAttributeDatas">The Attributes to parse.</param>
@@ -40,7 +71,6 @@ namespace FrameworkCommon
                 // Check each CustomAttributeData for a value containing "NUnit.Framework.DescriptionAttribute"
                 foreach (var kvp in jObject)
                 {
-                    // Console.WriteLine("{0}: {1}", kvp.Key, kvp.Value);
                     if (kvp.Value.ToString().Contains("NUnit.Framework.DescriptionAttribute"))
                     {
                         descriptionAttribute = customAttributeData;
@@ -52,11 +82,6 @@ namespace FrameworkCommon
                     else if (kvp.Value.ToString().Contains(".AutomatedBy"))
                     {
                         automatedByAttribute = customAttributeData;
-                    }
-                    // Stop parsing if we have found what we were looking for
-                    if ((descriptionAttribute != null) && (automatesAttribute != null))
-                    {
-                        break;
                     }
                 }
             }
@@ -76,7 +101,6 @@ namespace FrameworkCommon
         /// </summary>
         /// <param name="stringBuilder"></param>
         /// <param name="exception"></param>
-        /// <returns></returns>
         public static StringBuilder Exception(StringBuilder stringBuilder, Exception exception)
         {
             // Add the exception message to the StringBuilder
@@ -88,31 +112,83 @@ namespace FrameworkCommon
         }
 
         /// <summary>
+        /// A convenience method for logging a "[RESULT] Failure: {message}".
+        /// </summary>
+        /// <param name="message">(Optional) The message to display in the log's Result line.</param>
+        /// <param name="exception"></param>
+        public static void Failure(string message = "", Exception exception = null)
+        {
+            // Get the padding (if any)
+            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(2).GetMethod().ReflectedType);
+            // Write the line to the log
+            if (message != "")
+            {
+                WriteLine(logPadding.Padding + "[RESULT] Failure: " + message);
+            }
+            else if (exception != null)
+            {
+                WriteLine(logPadding.Padding + "[RESULT] Failure: " + exception.Message);
+            }
+            else
+            {
+                WriteLine(logPadding.Padding + "[RESULT] Failure!");
+            }
+            // If there is no padding, then write an end line to sepearte the actions in the log
+            if (logPadding.Padding == "")
+            {
+                Log.WriteLine();
+            }
+        }
+
+        /// <summary>
         /// Logs a NewLine if there is no padding for the methods logging.
         /// </summary>
         /// <param name="padding">(Optional) The padding used for prepending messages.</param>
-        public static void Finally(string padding = "")
+        public static void Finally()
         {
-            if (padding == "")
+            // Get the padding (if any)
+            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(2).GetMethod().ReflectedType);
+            // If there is no padding, then write an end line to sepearte the actions in the log
+            if (logPadding.Padding == "")
             {
                 WriteLine("");
             }
         }
 
         /// <summary>
+        /// Logs the Test properties from the TestContext. This conatins the NUnit attributes (not custom).
+        /// </summary>
+        public static void StandardAttributes()
+        {
+            // Log the current Test's [Description("")]
+            try
+            {
+                Log.WriteLine("[INFO] Test Description: " + TestContext.Get("Description"));
+                Log.WriteLine();
+            }
+            catch { /* do nothing */ }
+        }
+
+        /// <summary>
         /// A convenience method for logging a "[RESULT] Success!".
         /// </summary>
-        /// <param name="padding">(Optional) The whitespace to prepend to the log message.</param>
-        public static void Success(string padding = "")
+        public static void Success(string message = "")
         {
-            // If there is padding, the logging method was called by another. So we dont write a newline in the middle of those logs.
-            if (padding != "")
+            // Get the padding (if any)
+            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(2).GetMethod().ReflectedType);
+            // Write the line to the log
+            if (message != "")
             {
-                WriteLine(padding + "[RESULT] Success!");
+                WriteLine(logPadding.Padding + "[RESULT] Success: " + message);
             }
             else
             {
-                WriteLine("[RESULT] Success!");
+                WriteLine(logPadding.Padding + "[RESULT] Success!");
+            }
+            // If there is no padding, then write an end line to sepearte the actions in the log
+            if (logPadding.Padding == "")
+            {
+                Log.WriteLine();
             }
         }
 

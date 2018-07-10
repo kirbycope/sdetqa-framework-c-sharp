@@ -1,12 +1,9 @@
 ﻿using FrameworkCommon;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Configuration;
-using System.Diagnostics;
 using System.Net.Http;
-using System.Reflection;
-using System.Text;
 using Assert = FrameworkCommon.Assert;
 using TestContext = FrameworkCommon.TestContext;
 
@@ -32,26 +29,20 @@ namespace FrameworkApi
         [SetUp]
         public void SetUp()
         {
-            // Save a reference to the current Test's log in its TestContext
-            TestContext.Set("log", "");
-
             // Get the Base Address
             string baseAddress = ConfigurationManager.AppSettings["baseAddress"] ?? "";
 
-            // Get the Test's custom Attributes
-            IEnumerable<CustomAttributeData> customAttributeDatas = new StackTrace().GetFrame(1).GetMethod().CustomAttributes;
-            // Log the custom Attributes
-            Log.CustomAttributes(customAttributeDatas);
-            // Write an end-line
-            Log.WriteLine();
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "TestBase.SetUp()");
-            sb.AppendLine(logPadding.InfoPadding + "[INFO] Base Address: " + baseAddress);
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Save a reference to the current Test's log in its TestContext
+            TestContext.Set("log", "");
+
+            // Log the test attributes of the current [Test]
+            Log.StandardAttributes();
+
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "baseAddress", baseAddress }
+            });
+
             // Perform the action
             try
             {
@@ -64,25 +55,28 @@ namespace FrameworkApi
                 // Save that to the test context
                 TestContext.Set("httpClient", httpClient);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
         [TearDown]
         public void TearDown()
         {
+            // Log Before Action
+            Log.BeforeAction();
+
             // Print this Test's log (from "TestContext") to the system console
             string log = TestContext.Get("log").ToString();
             if (log.Length > 0)

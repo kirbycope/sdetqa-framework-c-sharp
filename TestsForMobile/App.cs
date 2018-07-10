@@ -18,32 +18,28 @@ namespace TestsForMobile
         /// </summary>
         public static void Back()
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "App.Back()");
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction();
+
             // Perform the action
             try
             {
                 // Press the [BACK] button
-                ((AndroidDriver<AppiumWebElement>)driver).PressKeyCode(AndroidKeyCode.Back);
+                ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Back);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
@@ -52,32 +48,28 @@ namespace TestsForMobile
         /// </summary>
         public static void PressEnter()
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "App.PressEnter()");
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction();
+
             // Perform the action
             try
             {
                 // Press the [ENTER] button
-                ((AndroidDriver<AppiumWebElement>)driver).PressKeyCode(AndroidKeyCode.Enter);
+                ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Enter);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
@@ -86,32 +78,28 @@ namespace TestsForMobile
         /// </summary>
         public static void PressVolumeDown()
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "App.PressVolumeDown()");
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction();
+
             // Perform the action
             try
             {
                 // Press the [Volume Down] button
-                ((AndroidDriver<AppiumWebElement>)driver).PressKeyCode(AndroidKeyCode.Keycode_VOLUME_DOWN);
+                ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Keycode_VOLUME_DOWN);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
@@ -120,32 +108,28 @@ namespace TestsForMobile
         /// </summary>
         public static void PressVolumeUp()
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "App.PressVolumeUp()");
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction();
+
             // Perform the action
             try
             {
                 // Press the [Volume Up] button
-                ((AndroidDriver<AppiumWebElement>)driver).PressKeyCode(AndroidKeyCode.Keycode_VOLUME_UP);
+                ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Keycode_VOLUME_UP);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 

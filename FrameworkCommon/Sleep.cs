@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Text;
+using System.Collections.Specialized;
 
 namespace FrameworkCommon
 {
@@ -13,34 +12,31 @@ namespace FrameworkCommon
         /// <param name="reason">The reason for the wait.</param>
         public static void Milliseconds(int milliseconds, string reason = "")
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "Sleep.Milliseconds(milliseconds, reason?)");
-            sb.AppendLine(logPadding.InfoPadding + "[PARAM] Milliseconds: " + milliseconds);
-            if (reason != "") { sb.AppendLine(logPadding.InfoPadding + "[PARAM] Reason: " + reason); }
-            sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "Milliseconds", milliseconds },
+                { "Reason", reason }
+            });
+
             // Perform the action
             try
             {
                 // Suspend the current thread for the specified number of milliseconds
                 System.Threading.Thread.Sleep(milliseconds);
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
     }

@@ -21,26 +21,15 @@ namespace FrameworkMobile
 
         #endregion Test Run Variable Defaults
 
-        [SetUp]
-        public void Setup()
+        /// <summary>
+        /// Create a TestBase for your specific project (see TestBaseStarAppIos, for example) and call this method.
+        /// The Setup annotation was removed to prevent it being called when there is a project specific Setup (see above).
+        /// </summary>
+        public static void Setup()
         {
-            // Save a reference to the current Test's log in its TestContext
-            TestContext.Set("log", "");
+            // Log Before Action
+            Log.BeforeAction();
 
-            // Get the Test's custom Attributes
-            IEnumerable<CustomAttributeData> customAttributeDatas = new StackTrace().GetFrame(1).GetMethod().CustomAttributes;
-            // Log the custom Attributes
-            Log.CustomAttributes(customAttributeDatas);
-            // Write an end-line
-            Log.WriteLine();
-
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "TestBase.Setup()");
-            //sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
             // Perform the action
             try
             {
@@ -49,16 +38,19 @@ namespace FrameworkMobile
                 // Create a variable to hold the Test's WebDriver
                 AppiumDriver<AppiumWebElement> driver = null;
                 // Is the global WebDriver varaiable set?
-                if ((Session.driver != null))
+                if (Session.driver != null)
                 {
-                    // Is there session info?
+                    // Create a variable to hold the Session Info
                     Dictionary<string, object> sessionInfo = null;
+                    // Try to get the Session Info (which only works if there is a valid session) from the global variable
+                    // Note: We need to use the same Appium session (driver) for all test or we could lose the device in the cloud.
                     try { sessionInfo = Session.driver.SessionDetails; }
                     catch { /* do nothing */ }
+                    // Check the Session Info variable has some content
                     if (sessionInfo != null)
                     {
                         // Use the existing session
-                        Log.WriteLine(logPadding.InfoPadding + "[INFO] Using the existing session.");
+                        Log.WriteLine("    [INFO] Using the existing session.");
                         driver = Session.driver;
                     }
                     else
@@ -70,73 +62,46 @@ namespace FrameworkMobile
                 // Should we create a new session?
                 if (createNewSession == true)
                 {
-                    // Wait 60 seconds to kill the current session (the default TimeOut for Appium)
-                    Sleep.Milliseconds(60000, "Waiting 60 seconds to kill the current session.");
+                    // Wait 60 seconds to timeout any existing sessions (in SauceLab's TestObject)
+                    if (ConfigurationManager.AppSettings["appConfig"].ToString().Contains("SauceLabs"))
+                    {
+                        Sleep.Milliseconds(60000, "Waiting 60 seconds to kill the current session (in SauceLab's TestObject).");
+                    }
                     // Create a new session
-                    Log.WriteLine(logPadding.InfoPadding + "[INFO] Creating a new session.");
+                    Log.WriteLine("    [INFO] Creating a new session.");
                     driver = Session.Create();
                 }
-                // Save a reference to the current Test's driver in its TestContext
+                // Save a reference to the current Test's driver (session) in its TestContext
                 TestContext.Set("driver", driver);
 
                 // Reset the app
                 AppBase.ResetApp();
 
                 // Logging - After action success
-                Log.Success(logPadding.Padding);
+                Log.Success();
             }
             catch (Exception e)
             {
                 // Logging - After action exception
-                sb = Log.Exception(sb, e);
-                // Fail current Test
-                Assert.Fail(sb.ToString());
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message);
             }
             finally
             {
                 // Logging - After action
-                Log.Finally(logPadding.Padding);
+                Log.Finally();
             }
         }
 
         [TearDown]
-        public void TearDown()
+        public static void TearDown()
         {
-            // Figure out the padding (if any) to prepend to the log line
-            LogPadding logPadding = new LogPadding(new StackTrace().GetFrame(1).GetMethod().ReflectedType);
-            // Logging - Before action
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logPadding.Padding + "TestBase.TearDown()");
-            //sb.AppendLine(logPadding.InfoPadding + "[STACK] Caller: " + new StackTrace().GetFrame(1).GetMethod().ReflectedType + "." + new StackTrace().GetFrame(1).GetMethod().Name + "()");
-            Log.Write(sb.ToString());
-            // Perform the action
-            try
+            // Print log to console (from TestContext)
+            string log = TestContext.Get("log").ToString();
+            if (log.Length > 0)
             {
-                // Check if the Test that is ending was a failure
-                if (NUnit.Framework.TestContext.CurrentContext.Result.Outcome != NUnit.Framework.Interfaces.ResultState.Success)
-                {
-                    // Take screenshot of the failure state
-                    //AppBase.GetScreenshot();
-                    // Logging - After action success
-                    //Log.Success(logPadding.Padding);
-                }
-            }
-            catch (Exception e)
-            {
-                // Logging - After action exception
-                sb = Log.Exception(sb, e);
-            }
-            finally
-            {
-                // Logging - After action
-                Log.Finally("");
-
-                // Print this Test's log (from "TestContext") to the system console
-                string log = TestContext.Get("log").ToString();
-                if (log.Length > 0)
-                {
-                    Console.WriteLine(log);
-                }
+                Console.WriteLine(log);
             }
         }
     }
