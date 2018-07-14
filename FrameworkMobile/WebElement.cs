@@ -119,7 +119,12 @@ namespace FrameworkMobile
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by" + this.by
+                    );
                 }
                 finally
                 {
@@ -159,8 +164,14 @@ namespace FrameworkMobile
                 {
                     // Logging - After action exception
                     Log.Failure(e.Message);
-                    // Fail current test
-                    //Assert.Fail(e.Message); // Not being able to tell if the element is displayed is the same as it not being displayed
+                    // Not being able to tell if the element is displayed is the same as it not being displayed
+                    //// Fail current test
+                    //Assert.Fail(e.Message
+                    //    + Environment.NewLine
+                    //    + "webElement.description : " + this.description
+                    //    + Environment.NewLine
+                    //    + "webElement.by" + this.by
+                    //);
                 }
                 finally
                 {
@@ -201,7 +212,12 @@ namespace FrameworkMobile
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by" + this.by
+                    );
                 }
                 finally
                 {
@@ -242,7 +258,12 @@ namespace FrameworkMobile
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by" + this.by
+                    );
                 }
                 finally
                 {
@@ -284,7 +305,12 @@ namespace FrameworkMobile
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by" + this.by
+                    );
                 }
                 finally
                 {
@@ -325,7 +351,12 @@ namespace FrameworkMobile
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by" + this.by
+                    );
                 }
                 finally
                 {
@@ -366,7 +397,12 @@ namespace FrameworkMobile
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by" + this.by
+                    );
                 }
                 finally
                 {
@@ -408,7 +444,12 @@ namespace FrameworkMobile
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by" + this.by
+                    );
                 }
                 finally
                 {
@@ -449,7 +490,12 @@ namespace FrameworkMobile
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by" + this.by
+                    );
                 }
                 finally
                 {
@@ -489,7 +535,12 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by" + this.by
+                );
             }
             finally
             {
@@ -532,7 +583,14 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by" + this.by
+                    + Environment.NewLine
+                    + "FindBy : " + by
+                );
             }
             finally
             {
@@ -583,7 +641,14 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by" + this.by
+                    + Environment.NewLine
+                    + "FindBy : " + by
+                );
             }
             finally
             {
@@ -624,7 +689,14 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by" + this.by
+                    + Environment.NewLine
+                    + "Attribute Name : " + attributeName
+                );
             }
             finally
             {
@@ -665,7 +737,14 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by" + this.by
+                    + Environment.NewLine
+                    + "Property Name : " + propertyName
+                );
             }
             finally
             {
@@ -706,7 +785,14 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by" + this.by
+                    + Environment.NewLine
+                    + "Property Name : " + propertyName
+                );
             }
             finally
             {
@@ -743,7 +829,14 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by" + this.by
+                    + Environment.NewLine
+                    + "Text : " + text
+                );
             }
             finally
             {
@@ -776,7 +869,12 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by" + this.by
+                );
             }
             finally
             {
@@ -810,7 +908,12 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by" + this.by
+                );
             }
             finally
             {
@@ -859,7 +962,12 @@ namespace FrameworkMobile
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by" + this.by
+                    );
                 }
                 finally
                 {
@@ -903,7 +1011,12 @@ namespace FrameworkMobile
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by" + this.by
+                    );
                 }
                 finally
                 {
@@ -947,7 +1060,12 @@ namespace FrameworkMobile
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by" + this.by
+                    );
                 }
                 finally
                 {
@@ -994,7 +1112,12 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by" + this.by
+                );
             }
             finally
             {
@@ -1033,7 +1156,12 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by" + this.by
+                );
             }
             finally
             {

@@ -67,7 +67,10 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Script : " + script
+                );
             }
             finally
             {
@@ -115,7 +118,10 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Script : " + script
+                );
             }
             finally
             {
@@ -162,7 +168,10 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "FindBy : " + by
+                );
             }
             finally
             {
@@ -211,7 +220,10 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "FindBy : " + by
+                );
             }
             finally
             {
@@ -489,7 +501,14 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Given URL : " + url
+                    + Environment.NewLine
+                    + "Use Base URL? :" + useBaseUrl
+                    + Environment.NewLine
+                    + "Base URL : " + baseUrl
+                );
             }
             finally
             {
@@ -502,7 +521,7 @@ namespace FrameworkDesktop
         /// Load a new web page in the current browser window.
         /// </summary>
         /// <param name="uri">The URI to load.</param>
-        public static void GoToUrl(Uri uri)
+        public static void GoToUri(Uri uri)
         {
             // Log Before Action
             Log.BeforeAction(new OrderedDictionary() {
@@ -522,7 +541,10 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Given URI : " + uri
+                );
             }
             finally
             {
@@ -659,7 +681,10 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Pixels : " + pixels
+                );
             }
             finally
             {
@@ -692,7 +717,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + webElement.description
+                    + Environment.NewLine
+                    + "webElement.by : " + webElement.by
+                );
             }
             finally
             {
@@ -785,7 +815,10 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Pixels : " + pixels
+                );
             }
             finally
             {
@@ -819,7 +852,10 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Keys To Send : " + keysToSend
+                );
             }
             finally
             {
@@ -931,7 +967,10 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Script : " + script
+                );
             }
             finally
             {
@@ -971,7 +1010,10 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Text : " + text
+                );
             }
             finally
             {

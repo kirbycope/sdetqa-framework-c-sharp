@@ -284,14 +284,14 @@ namespace FrameworkMobile
         }
 
         /// <summary>
-        /// Performs a swipe gesture using the given coordinates.
+        /// Convenience method for swiping across the screen.
         /// </summary>
-        /// <param name="startX">The starting X coordinate.</param>
-        /// <param name="startY">The starting Y coordinate.</param>
-        /// <param name="endX">The ending X coordinate.</param>
-        /// <param name="endY">The ending Y coordinate.</param>
-        /// <param name="duration">The time (in miliseconds) to take performing the action.</param>
-        /// <param name="swipes">The number of times to perform the action.</param>
+        /// <param name="startX">Starting X-coordinate.</param>
+        /// <param name="startY">Starting Y-coordinate.</param>
+        /// <param name="endX">Ending X-coordinate.</param>
+        /// <param name="endY">Ending Y-coordinate.</param>
+        /// <param name="duration">Amount of time in milliseconds for the entire swipe action to take.</param>
+        /// <param name="swipes">The number of times to perform the swipe.</param>
         public static void Swipe(int startX, int startY, int endX, int endY, int duration = 2160, int swipes = 1)
         {
             // Log Before Action
@@ -309,17 +309,8 @@ namespace FrameworkMobile
             {
                 for (int i = 0; i < swipes; i++)
                 {
-                    // Define and perform the Touch Action
-                    TouchAction touchAction = new TouchAction(Driver);
-                    touchAction
-                        .Press(startX, startY)
-                        .Wait(duration)
-                        .MoveTo(endX, endY)
-                        .Wait(duration)
-                        .Release()
-                        .Perform();
-                    // Wait a moment
-                    System.Threading.Thread.Sleep(500);
+                    // Swipe using the given parameter values
+                    Driver.Swipe(startX, startY, endX, endY, duration);
                 }
                 // Logging - After action success
                 Log.Success();
@@ -403,50 +394,10 @@ namespace FrameworkMobile
         }
 
         /// <summary>
-        /// Performs a swipe from startX, startY to endX, endY.
-        /// </summary>
-        /// <param name="startX">The starting X coordinate.</param>
-        /// <param name="startY">The starting Y coordinate.</param>
-        /// <param name="endX">The ending X coordinate.</param>
-        /// <param name="endY">The ending Y coordinate.</param>
-        /// <param name="duration">The time (in miliseconds) to take performing the action.</param>
-        public static void DragCoordinates(int startX, int startY, int endX, int endY, int duration = 500)
-        {
-            // Log Before Action
-            Log.BeforeAction(new OrderedDictionary() {
-                { "Start X", startX },
-                { "Start Y", startY },
-                { "End X", endX },
-                { "End Y", endY },
-                { "Duration", duration }
-            });
-
-            // Perform the action
-            try
-            {
-                // Perform the action
-                Driver.Swipe(startX, startY, endX, endY, duration);
-                // Logging - After action success
-                Log.Success();
-            }
-            catch (Exception e)
-            {
-                // Logging - After action exception
-                Log.Failure(e.Message);
-                // Fail current test
-                Assert.Fail(e.Message);
-            }
-            finally
-            {
-                // Logging - After action
-                Log.Finally();
-            }
-        }
-
-        /// <summary>
         /// Scrolls the given element to the top of the window.
         /// </summary>
         /// <param name="webElement">The WebElement (element) to scroll.</param>
+        /// <param name="duration">The time (in miliseconds) to take performing the action.</param>
         public static void ScrollElementToTop(WebElement webElement)
         {
             // Log Before Action
@@ -460,10 +411,6 @@ namespace FrameworkMobile
             {
                 // Get the window's size
                 Size windowSize = Driver.Manage().Window.Size;
-                // Find the center X coordinate of the window
-                int windowCenterX = windowSize.Width / 2;
-                // Find the center Y coordinate of the window
-                int windowCenterY = windowSize.Height / 2;
                 // Get the start time
                 DateTime startTime = DateTime.Now;
                 // Create a flag for if the element is "In View", meaning it's Y-coordinate is within the window height
@@ -486,11 +433,24 @@ namespace FrameworkMobile
                 }
                 // Get the current location of the WebElement
                 Point location = webElement.Location;
+                // Declare a vairable to hold the target location
+                int targetY = 1;
+                // Handle the difference in OS
+                if (ConfigurationManager.AppSettings["platformName"] == "Android")
+                {
+                    // Get the height of the navigation bar (Add 1 so that we scroll the element right under)
+                    targetY = GetOffsetForAndroid() + 1;
+                }
+                else if (ConfigurationManager.AppSettings["platformName"] == "iOS")
+                {
+                    // Get the height of the navigation bar (Add 1 so that we scroll the element right under)
+                    targetY = GetOffsetForIos() + 1;
+                }
                 // Scroll closer to top if the Y-coordinate is not above the sticky header
-                if (location.Y > 1)
+                if (location.Y > targetY)
                 {
                     // Swipe the WebElement the top (accounting for the NavBar)
-                    Swipe(location.X, location.Y, location.X, 1);
+                    SwipeWithoutInertia(location.X, location.Y, location.X, targetY);
                 }
                 // Logging - After action success
                 Log.Success();
@@ -500,7 +460,12 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + webElement.description
+                    + Environment.NewLine
+                    + "webElement.by" + webElement.by
+                );
             }
             finally
             {
@@ -508,9 +473,9 @@ namespace FrameworkMobile
                 Log.Finally();
             }
         }
-        
+
         /// <summary>
-        /// Scroll until an element that matches the toMarked is shown on the screen.
+        /// Scrolls until the element is Displayed or times out.
         /// </summary>
         public static void ScrollTo(WebElement webElement)
         {
@@ -528,7 +493,7 @@ namespace FrameworkMobile
                 // While the element is not displayed and the time-out has not been reached
                 while ((webElement.Displayed == false) && (startTime.AddSeconds(TestBase.defaultTimeoutInSeconds) > DateTime.Now))
                 {
-                    SwipeMiddleToTop();
+                    SwipeUp(200);
                 }
                 // Logging - After action success
                 Log.Success();
@@ -538,7 +503,12 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + webElement.description
+                    + Environment.NewLine
+                    + "webElement.by" + webElement.by
+                );
             }
             finally
             {
@@ -548,22 +518,22 @@ namespace FrameworkMobile
         }
 
         /// <summary>
-        /// Scrolls to the first element containing the given text.
+        /// Sends a sequence of keystrokes to the Driver.
         /// </summary>
-        public static void ScrollTo(string text)
+        /// <param name="keysToSend">The keystrokes to send to the Driver.</param>
+        public static void SendKeys(string keysToSend)
         {
             // Log Before Action
             Log.BeforeAction(new OrderedDictionary() {
-                { "Text", text }
+                { "Keys To Send", keysToSend }
             });
 
             // Perform the action
             try
             {
-                // Find the element with the matching Text
-                AppiumWebElement element = FindElement(By.XPath("//*[text()[contains(.,'" + text + "')]]")).element;
-                // Scroll the element to the top of the view
-                ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].scrollIntoView(true);", element);
+                // Send the keys
+                Actions action = new Actions(Driver);
+                action.SendKeys(keysToSend).Build().Perform();
                 // Logging - After action success
                 Log.Success();
             }
@@ -572,7 +542,11 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Keys To Send : " + keysToSend
+                );
             }
             finally
             {
@@ -641,75 +615,64 @@ namespace FrameworkMobile
             }
         }
 
-        /// <summary>
-        /// Performs a left to right swipe gesture.
-        /// </summary>
-        /// <param name="swipes">The number of times to perform the action.</param>
-        public static void SwipeLeftToRight(int swipes = 1)
+        public enum Direction
         {
-            // Log Before Action
-            Log.BeforeAction(new OrderedDictionary() {
-                { "Swipes", swipes }
-            });
-
-            // Perform the action
-            try
-            {
-                for (int i = 0; i < swipes; i++)
-                {
-                    // Get the window's size
-                    Size windowSize = Driver.Manage().Window.Size;
-                    // Find the center Y coordinate of the window
-                    int windowCenterY = windowSize.Height / 2;
-                    // Swipe from the left to the right at the middle of the window
-                    Driver.Swipe(1, windowCenterY, windowSize.Width, windowCenterY, 1000);
-                    // Wait a moment
-                    System.Threading.Thread.Sleep(500);
-                }
-                // Logging - After action success
-                Log.Success();
-            }
-            catch (Exception e)
-            {
-                // Logging - After action exception
-                Log.Failure(e.Message);
-                // Fail current test
-                Assert.Fail(e.Message);
-            }
-            finally
-            {
-                // Logging - After action
-                Log.Finally();
-            }
+            Down,
+            Left,
+            Right,
+            Up
         }
 
         /// <summary>
-        /// Performs a left to right swipe gesture using the given element's Y coordinate.
+        /// Swipes from the middle to the screen to the given edge of the screen.
         /// </summary>
-        /// <param name="webElement"></param>
-        public static void SwipeLeftToRight(WebElement webElement, int swipes = 1)
+        /// <param name="direction">The direction to swipe to from the center of the screen.</param>
+        /// <param name="swipes">(Optional) The number of swipes to perform.</param>
+        public static void SwipeFromMiddle(Direction direction, int swipes = 1)
         {
             // Log Before Action
             Log.BeforeAction(new OrderedDictionary() {
-                { "webElement.description", webElement.description },
-                { "webElement.by", webElement.by },
+                { "Direction", direction },
                 { "Swipes", swipes }
             });
 
             // Perform the action
             try
             {
+                // Get the window's size
+                Size windowSize = Driver.Manage().Window.Size;
+                // Find the center X coordinate of the window
+                int startX = windowSize.Width / 2;
+                // Find the center Y coordinate of the window
+                int startY = windowSize.Height / 2;
+                // Declare variables to hold the end X/Y coordinates
+                int endX = 0;
+                int endY = 0;
+                // Set the end X/Y coordinates accordingly
+                if (direction == Direction.Down)
+                {
+                    endX = startX;
+                    endY = windowSize.Height - 1;
+                }
+                else if (direction == Direction.Left)
+                {
+                    endX = 1;
+                    endY = startY;
+                }
+                else if (direction == Direction.Right)
+                {
+                    endX = windowSize.Width - 1;
+                    endY = startY;
+                }
+                else if (direction == Direction.Up)
+                {
+                    endX = startX;
+                    endY = 1;
+                }
+                // Perform the swipe the given number of times
                 for (int i = 0; i < swipes; i++)
                 {
-                    // startX = The left most edge of the screen
-                    int startX = 1;
-                    // startY = The center Y coordinate of the given element
-                    int startY = webElement.Location.Y + (webElement.Size.Height / 2);
-                    // endX = The right most edge of the screen
-                    int endX = Driver.Manage().Window.Size.Width;
-                    // endY = The center Y coordinate of the given element
-                    int endY = startY;
-                    // Swipe from the left to the right at the middle of the given element
+                    // Swipe using the calculated values
                     Driver.Swipe(startX, startY, endX, endY, 1000);
                     // Wait a moment
                     System.Threading.Thread.Sleep(500);
@@ -722,7 +685,12 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Direction : " + direction
+                    + Environment.NewLine
+                    + "Swipes : " + swipes
+                );
             }
             finally
             {
@@ -731,32 +699,59 @@ namespace FrameworkMobile
             }
         }
 
+        public enum EdgeDirection
+        {
+            LeftToRight,
+            RightToLeft
+        }
+
         /// <summary>
-        /// Scrolls up by performing a swipe gesture from the middle of the screen to the bottom
+        /// Swipes (at the middle of the screen) from one edge of the screen to the other.
         /// </summary>
-        public static void SwipeMiddleToBottom(int swipes = 1)
+        /// <param name="edgeDirection">The direction to swipe.</param>
+        /// <param name="swipes">(Optional) The number of swipes to perform.</param>
+        public static void SwipeEdgeToEdge(EdgeDirection edgeDirection, int swipes = 1)
         {
             // Log Before Action
             Log.BeforeAction(new OrderedDictionary() {
+                { "Edge Direction", edgeDirection },
                 { "Swipes", swipes }
             });
 
             // Perform the action
             try
             {
+                // Get the window's size
+                Size windowSize = Driver.Manage().Window.Size;
+                // Find the center X coordinate of the window
+                int centerX = windowSize.Width / 2;
+                // Find the center Y coordinate of the window
+                int centerY = windowSize.Height / 2;
+                // Declare variables to hold the X/Y coordinates
+                int startX = 0;
+                int startY = 0;
+                int endX = 0;
+                int endY = 0;
+                // Set the X/Y coordinates accordingly
+                if (edgeDirection == EdgeDirection.LeftToRight)
+                {
+                    startX = 1;
+                    startY = centerY;
+                    endX = windowSize.Width - 1;
+                    endY = centerY;
+                }
+                else if (edgeDirection == EdgeDirection.RightToLeft)
+                {
+                    startX = windowSize.Width - 1;
+                    startY = centerY;
+                    endX = 1;
+                    endY = centerY;
+                }
+                // Perform the swipe the given number of times
                 for (int i = 0; i < swipes; i++)
                 {
-                    System.Threading.Thread.Sleep(1000);
-                    // Get the window's size
-                    Size windowSize = Driver.Manage().Window.Size;
-                    // Find the center X coordinate of the window
-                    int windowCenterX = windowSize.Width / 2;
-                    // Find the center Y coordinate of the window
-                    int windowCenterY = windowSize.Height / 2;
-                    // Find the bottom Y coordinate of the window
-                    int windowBottomY = windowSize.Height - 100;
-                    // Swipe from the middle to the bottom of the window
-                    Driver.Swipe(windowCenterX, windowCenterY, 0, windowBottomY, 1000);
+                    // Swipe using the calculated values
+                    Driver.Swipe(startX, startY, endX, endY, 1000);
                     // Wait a moment
                     System.Threading.Thread.Sleep(500);
                 }
@@ -768,7 +763,12 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Edge Direction : " + edgeDirection
+                    + Environment.NewLine
+                    + "Swipes : " + swipes
+                );
             }
             finally
             {
@@ -778,117 +778,55 @@ namespace FrameworkMobile
         }
 
         /// <summary>
-        /// Scrolls down by performing a swipe gesture from the middle of the screen to the top
+        /// Swipes (at the middle of the element) from one edge of the screen to the other.
         /// </summary>
-        public static void SwipeMiddleToTop(int swipes = 1)
-        {
-            // Log Before Action
-            Log.BeforeAction(new OrderedDictionary() {
-                { "Swipes", swipes }
-            });
-
-            // Perform the action
-            try
-            {
-                for (int i = 0; i < swipes; i++)
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    // Get the window's size
-                    Size windowSize = Driver.Manage().Window.Size;
-                    // Find the center X coordinate of the window
-                    int windowCenterX = windowSize.Width / 2;
-                    // Find the center Y coordinate of the window
-                    int windowCenterY = windowSize.Height / 2;
-                    // Swipe from the middle to the top of the window
-                    Driver.Swipe(windowCenterX, windowCenterY, windowCenterX, 1, 1000);
-                    // Wait a moment
-                    System.Threading.Thread.Sleep(500);
-                }
-                // Logging - After action success
-                Log.Success();
-            }
-            catch (Exception e)
-            {
-                // Logging - After action exception
-                Log.Failure(e.Message);
-                // Fail current test
-                Assert.Fail(e.Message);
-            }
-            finally
-            {
-                // Logging - After action
-                Log.Finally();
-            }
-        }
-
-        /// <summary>
-        /// Performs a left to right swipe gesture.
-        /// </summary>
-        public static void SwipeRightToLeft(int swipes = 1)
-        {
-            // Log Before Action
-            Log.BeforeAction(new OrderedDictionary() {
-                { "Swipes", swipes }
-            });
-
-            // Perform the action
-            try
-            {
-                for (int i = 0; i < swipes; i++)
-                {
-                    // Get the window's size
-                    Size windowSize = Driver.Manage().Window.Size;
-                    // Find the center Y coordinate of the window
-                    int windowCenterY = windowSize.Height / 2;
-                    // Swipe from the right to the left at the middle of the window
-                    Driver.Swipe(windowSize.Width - 10, windowCenterY, 10, windowCenterY, 1000);
-                    // Wait a moment
-                    System.Threading.Thread.Sleep(500);
-                }
-                // Logging - After action success
-                Log.Success();
-            }
-            catch (Exception e)
-            {
-                // Logging - After action exception
-                Log.Failure(e.Message);
-                // Fail current test
-                Assert.Fail(e.Message);
-            }
-            finally
-            {
-                // Logging - After action
-                Log.Finally();
-            }
-        }
-        
-        /// <summary>
-        /// Performs a right to left swipe gesture using the given element's Y coordinate.
-        /// </summary>
-        public static void SwipeRightToLeft(WebElement webElement, int swipes = 1)
+        /// <param name="webElement">The element whose Y-coordinate to use.</param>
+        /// <param name="edgeDirection">The direction to swipe.</param>
+        /// <param name="swipes">(Optional) The number of swipes to perform.</param>
+        public static void SwipeEdgeToEdge(WebElement webElement, EdgeDirection edgeDirection, int swipes = 1)
         {
             // Log Before Action
             Log.BeforeAction(new OrderedDictionary() {
                 { "webElement.description", webElement.description },
                 { "webElement.by", webElement.by },
+                { "Edge Direction", edgeDirection },
                 { "Swipes", swipes }
             });
 
             // Perform the action
             try
             {
+                // Get the window's size
+                Size windowSize = Driver.Manage().Window.Size;
+                // Get the WebElement's location
+                int centerY = webElement.Location.Y;
+                // Declare variables to hold the X/Y coordinates
+                int startX = 0;
+                int startY = 0;
+                int endX = 0;
+                int endY = 0;
+                // Set the X/Y coordinates accordingly
+                if (edgeDirection == EdgeDirection.LeftToRight)
+                {
+                    startX = 1;
+                    startY = centerY;
+                    endX = windowSize.Width - 1;
+                    endY = centerY;
+                }
+                else if (edgeDirection == EdgeDirection.RightToLeft)
+                {
+                    startX = windowSize.Width - 1;
+                    startY = centerY;
+                    endX = 1;
+                    endY = centerY;
+                }
+                // Perform the swipe the given number of times
                 for (int i = 0; i < swipes; i++)
                 {
-                    // startX = The right most edge of the screen
-                    int startX = Driver.Manage().Window.Size.Width - 1;
-                    // startY = The center Y coordinate of the given element
-                    int startY = webElement.Location.Y + (webElement.Size.Height / 2);
-                    // endX = The left most edge of the screen
-                    int endX = 1;
-                    // endY = The center of the given element
-                    int endY = startY;
-                    // Swipe from the right to the left at Y-coordinate of the given element
-                    Driver.Swipe(startX - 10, startY, endX + 10, endY, 1000);
+                    // Swipe using the calculated values
+                    Driver.Swipe(startX, startY, endX, endY, 1000);
+                    // Wait a moment
+                    System.Threading.Thread.Sleep(500);
                 }
                 // Logging - After action success
                 Log.Success();
@@ -898,7 +836,16 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + webElement.description
+                    + Environment.NewLine
+                    + "webElement.by" + webElement.by
+                    + Environment.NewLine
+                    + "Edge Direction : " + edgeDirection
+                    + Environment.NewLine
+                    + "Swipes : " + swipes
+                );
             }
             finally
             {
@@ -936,12 +883,12 @@ namespace FrameworkMobile
                 {
                     pixels = pixels * -1;
                 }
-                // Perform the action the given number of times
+                // Perform the swipe the given number of times
                 for (int i = 0; i < swipes; i++)
                 {
                     // Perform the action
                     TouchAction touchAction = new TouchAction(Driver);
-                    touchAction.Press(windowCenterX, windowCenterY).Wait(duration).MoveTo(0, pixels).Release().Perform();
+                    touchAction.Press(windowCenterX, windowCenterY).Wait(duration).MoveTo(windowCenterX, pixels).Release().Perform();
 
                     // Wait a moment
                     System.Threading.Thread.Sleep(500);
@@ -954,7 +901,93 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Pixels : " + pixels
+                    + Environment.NewLine
+                    + "Duration : " + duration
+                    + Environment.NewLine
+                    + "Swipes : " + swipes
+                );
+            }
+            finally
+            {
+                // Logging - After action
+                Log.Finally();
+            }
+        }
+
+        /// <summary>
+        /// Performs a swipe gesture using the given coordinates.
+        /// </summary>
+        /// <param name="startX">The starting X coordinate.</param>
+        /// <param name="startY">The starting Y coordinate.</param>
+        /// <param name="endX">The ending X coordinate.</param>
+        /// <param name="endY">The ending Y coordinate.</param>
+        /// <param name="duration">The time (in miliseconds) to take performing the action.</param>
+        /// <param name="swipes">The number of times to perform the action.</param>
+        public static void SwipeWithoutInertia(int startX, int startY, int endX, int endY, int duration = 2160, int swipes = 1)
+        {
+            // Log Before Action
+            Log.BeforeAction(new OrderedDictionary() {
+                { "Start X", startX },
+                { "Start Y", startY },
+                { "End X", endX },
+                { "End Y", endY },
+                { "Duration", duration },
+                { "Swipes", swipes }
+            });
+
+            // Perform the action
+            try
+            {
+                // Get the Platform Name
+                string platformName = ConfigurationManager.AppSettings["platformName"];
+                // Perform the swipe the given number of times
+                for (int i = 0; i < swipes; i++)
+                {
+                    // Handle the difference in OS
+                    if (platformName == "Android")
+                    {
+                        Driver.Swipe(startX, startY, endX, endY, duration);
+                    }
+                    else if (platformName == "iOS")
+                    {
+                        // Define and perform the Touch Action
+                        TouchAction touchAction = new TouchAction(Driver);
+                        touchAction
+                            .Press(startX, startY)
+                            .Wait(duration)
+                            .MoveTo(endX, endY)
+                            .Wait(duration)
+                            .Release()
+                            .Perform();
+                    }
+                    // Wait a moment
+                    System.Threading.Thread.Sleep(500);
+                }
+                // Logging - After action success
+                Log.Success();
+            }
+            catch (Exception e)
+            {
+                // Logging - After action exception
+                Log.Failure(e.Message);
+                // Fail current test
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "StartX : " + startX
+                    + Environment.NewLine
+                    + "StartY : " + startY
+                    + Environment.NewLine
+                    + "EndX : " + endX
+                    + Environment.NewLine
+                    + "EndX : " + endX
+                    + Environment.NewLine
+                    + "Duration" + duration
+                    + Environment.NewLine
+                    + "Swipes" + swipes
+                );
             }
             finally
             {
@@ -1014,9 +1047,12 @@ namespace FrameworkMobile
             // Perform the action
             try
             {
-                // Max Iterations = The time in miliseconds divided by the sleep time (in the loop below)
-                int maxIterations = (timeOutInSeconds * 1000) / 250;
-                for (int i = 0; i < maxIterations; i++)
+                // Define a variable to hold the result
+                bool displayed = false;
+                // Get the start time
+                DateTime startTime = DateTime.Now;
+                // While we haven't timed out
+                while (startTime.AddSeconds(timeOutInSeconds) > DateTime.Now)
                 {
                     try
                     {
@@ -1025,6 +1061,7 @@ namespace FrameworkMobile
                         Size size = appiumWebElement.Size;
                         if (location.X > -1 && location.Y > -1 && size.IsEmpty == false)
                         {
+                            displayed = true;
                             break;
                         }
                     }
@@ -1036,10 +1073,10 @@ namespace FrameworkMobile
                     {
                         System.Threading.Thread.Sleep(250);
                     }
-                    if (i == (maxIterations - 1))
-                    {
-                        throw new TimeoutException("Timed out before the element was displayed.");
-                    }
+                }
+                if (displayed == false)
+                {
+                    throw new TimeoutException("Timed out before the element was displayed.");
                 }
                 // Logging - After action success
                 Log.Success();
@@ -1049,7 +1086,12 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "FindBy : " + by
+                    + Environment.NewLine
+                    + "Timeout in Seconds: " + timeOutInSeconds
+                );
             }
             finally
             {
@@ -1073,9 +1115,12 @@ namespace FrameworkMobile
             // Perform the action
             try
             {
-                // Max Iterations = The time in miliseconds divided by the sleep time (in the loop below)
-                int maxIterations = (timeOutInSeconds * 1000) / 250;
-                for (int i = 0; i < maxIterations; i++)
+                // Define a variable to hold the result
+                bool displayed = false;
+                // Get the start time
+                DateTime startTime = DateTime.Now;
+                // While we haven't timed out
+                while (startTime.AddSeconds(timeOutInSeconds) > DateTime.Now)
                 {
                     try
                     {
@@ -1083,6 +1128,7 @@ namespace FrameworkMobile
                         Size size = appiumWebElement.Size;
                         if (location.X > -1 && location.Y > -1 && size.IsEmpty == false)
                         {
+                            displayed = true;
                             break;
                         }
                     }
@@ -1094,10 +1140,10 @@ namespace FrameworkMobile
                     {
                         System.Threading.Thread.Sleep(250);
                     }
-                    if (i == (maxIterations - 1))
-                    {
-                        throw new TimeoutException("Timed out waiting for the element to be displayed.");
-                    }
+                }
+                if (displayed == false)
+                {
+                    throw new TimeoutException("Timed out before the element was displayed.");
                 }
                 // Logging - After action success
                 Log.Success();
@@ -1107,7 +1153,10 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Timeout in Seconds: " + timeOutInSeconds
+                );
             }
             finally
             {
@@ -1132,15 +1181,19 @@ namespace FrameworkMobile
             // Perform the action
             try
             {
-                // Max Iterations = The time in miliseconds divided by the sleep time (in the loop below)
-                int maxIterations = (timeOutInSeconds * 1000) / 250;
-                for (int i = 0; i < maxIterations; i++)
+                // Define a variable to hold the result
+                bool displayed = true;
+                // Get the start time
+                DateTime startTime = DateTime.Now;
+                // While we haven't timed out
+                while (startTime.AddSeconds(timeOutInSeconds) > DateTime.Now)
                 {
                     try
                     {
                         AppiumWebElement appiumWebElement = Driver.FindElement(by);
                         if (appiumWebElement.Displayed == false)
                         {
+                            displayed = false;
                             break;
                         }
                     }
@@ -1152,10 +1205,10 @@ namespace FrameworkMobile
                     {
                         System.Threading.Thread.Sleep(250);
                     }
-                    if (i == (maxIterations - 1))
-                    {
-                        throw new TimeoutException("Timed out waiting for the element to be not displayed.");
-                    }
+                }
+                if (displayed == true)
+                {
+                    throw new TimeoutException("Timed out before the element was not displayed.");
                 }
                 // Logging - After action success
                 Log.Success();
@@ -1165,7 +1218,12 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "FindBy : " + by
+                    + Environment.NewLine
+                    + "Timeout in Seconds: " + timeOutInSeconds
+                );
             }
             finally
             {
@@ -1189,15 +1247,18 @@ namespace FrameworkMobile
             // Perform the action
             try
             {
-                // Max Iterations = The time in miliseconds divided by the sleep time (in the loop below)
-                int maxIterations = (timeOutInSeconds * 1000) / 250;
-                for (int i = 0; i < maxIterations; i++)
+                // Define a variable to hold the result
+                bool displayed = true;
+                // Get the start time
+                DateTime startTime = DateTime.Now;
+                // While we haven't timed out
+                while (startTime.AddSeconds(timeOutInSeconds) > DateTime.Now)
                 {
                     try
                     {
-                        bool displayed = appiumWebElement.Displayed;
-                        if (displayed == false)
+                        if (appiumWebElement.Displayed == false)
                         {
+                            displayed = false;
                             break;
                         }
                     }
@@ -1209,10 +1270,10 @@ namespace FrameworkMobile
                     {
                         System.Threading.Thread.Sleep(250);
                     }
-                    if (i == (maxIterations - 1))
-                    {
-                        throw new TimeoutException("Timed out waiting for the element to be not displayed.");
-                    }
+                }
+                if (displayed == true)
+                {
+                    throw new TimeoutException("Timed out before the element was not displayed.");
                 }
                 // Logging - After action success
                 Log.Success();
@@ -1222,41 +1283,10 @@ namespace FrameworkMobile
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
-            }
-            finally
-            {
-                // Logging - After action
-                Log.Finally();
-            }
-        }
-
-        /// <summary>
-        /// Sends a sequence of keystrokes to the browser.
-        /// </summary>
-        /// <param name="keysToSend">The keystrokes to send to the browser.</param>
-        public static void SendKeys(string keysToSend)
-        {
-            // Log Before Action
-            Log.BeforeAction(new OrderedDictionary() {
-                { "Keys To Send", keysToSend }
-            });
-
-            // Perform the action
-            try
-            {
-                // Send the keys
-                Actions action = new Actions(Driver);
-                action.SendKeys(keysToSend).Build().Perform();
-                // Logging - After action success
-                Log.Success();
-            }
-            catch (Exception e)
-            {
-                // Logging - After action exception
-                Log.Failure(e.Message);
-                // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "Timeout in Seconds: " + timeOutInSeconds
+                );
             }
             finally
             {
@@ -1266,6 +1296,28 @@ namespace FrameworkMobile
         }
 
         #endregion Custom App Methods
+
+        #region Private Methods
+
+        /// <summary>
+        /// Get the height of the OS toolbar and App toolbar.
+        /// </summary>
+        /// <returns>The Y-coordinate offset.</returns>
+        private static int GetOffsetForAndroid()
+        {
+            WebElement starzToolBar = new WebElement(By.Id("tool_bar"), "Starz app toolbar");
+            return starzToolBar.Location.Y + starzToolBar.Size.Height;
+        }
+
+        /// <summary>
+        /// Get the height of the OS toolbar and App toolbar.
+        /// </summary>
+        /// <returns>The Y-coordinate offset.</returns>
+        private static int GetOffsetForIos()
+        {
+            WebElement starzToolBar = new WebElement(By.XPath("//XCUIElementTypeNavigationBar"), "Starz app toolbar");
+            return starzToolBar.Location.Y + starzToolBar.Size.Height;
+        }
 
         /// <summary>
         /// Determines if the given WebElement's Y-coordinate is within the Window Height.
@@ -1298,11 +1350,7 @@ namespace FrameworkMobile
             }
             return inView;
         }
-        
-        // https://raw.githubusercontent.com/DotNetSeleniumTools/DotNetSeleniumExtras/master/src/WaitHelpers/ExpectedConditions.cs
-        private static IWebElement ElementIfVisible(IWebElement element)
-        {
-            return element.Displayed ? element : null;
-        }
+
+        #endregion Private Methods
     }
 }

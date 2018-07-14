@@ -129,8 +129,14 @@ namespace FrameworkDesktop
                 {
                     // Logging - After action exception
                     Log.Failure(e.Message);
+                    // Not being able to tell if the element is displayed is the same as it not being displayed
                     // Fail current test
-                    //Assert.Fail(e.Message); // Not being able to tell if the element is displayed is the same as it not being displayed
+                    //Assert.Fail(e.Message
+                    //    + Environment.NewLine
+                    //    + "webElement.description : " + this.description
+                    //    + Environment.NewLine
+                    //    + "webElement.by : " + this.by
+                    //);
                 }
                 finally
                 {
@@ -172,7 +178,12 @@ namespace FrameworkDesktop
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by : " + this.by
+                    );
                 }
                 finally
                 {
@@ -215,7 +226,12 @@ namespace FrameworkDesktop
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by : " + this.by
+                    );
                 }
                 finally
                 {
@@ -257,7 +273,12 @@ namespace FrameworkDesktop
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by : " + this.by
+                    );
                 }
                 finally
                 {
@@ -299,7 +320,12 @@ namespace FrameworkDesktop
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by : " + this.by
+                    );
                 }
                 finally
                 {
@@ -341,7 +367,12 @@ namespace FrameworkDesktop
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by : " + this.by
+                    );
                 }
                 finally
                 {
@@ -383,7 +414,12 @@ namespace FrameworkDesktop
                     // Logging - After action exception
                     Log.Failure(e.Message);
                     // Fail current test
-                    Assert.Fail(e.Message);
+                    Assert.Fail(e.Message
+                        + Environment.NewLine
+                        + "webElement.description : " + this.description
+                        + Environment.NewLine
+                        + "webElement.by : " + this.by
+                    );
                 }
                 finally
                 {
@@ -424,7 +460,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -459,7 +500,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -481,7 +527,8 @@ namespace FrameworkDesktop
             // Log Before Action
             Log.BeforeAction(new OrderedDictionary() {
                 { "webElement.description", this.description },
-                { "webElement.by", this.by }
+                { "webElement.by", this.by },
+                { "FindBy", by}
             });
 
             // Perform the action
@@ -501,7 +548,14 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                    + Environment.NewLine
+                    + "FindBy : " + by
+                );
             }
             finally
             {
@@ -527,7 +581,7 @@ namespace FrameworkDesktop
             Log.BeforeAction(new OrderedDictionary() {
                 { "webElement.description", this.description },
                 { "webElement.by", this.by },
-                { "FindsBy", by }
+                { "FindBy", by }
             });
 
             // Perform the action
@@ -553,7 +607,14 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                    + Environment.NewLine
+                    + "FindBy : " + by
+                );
             }
             finally
             {
@@ -595,7 +656,14 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                    + Environment.NewLine
+                    + "Attribute Name : " + attributeName
+                );
             }
             finally
             {
@@ -637,7 +705,13 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                    + "Property Name : " + propertyName
+                );
             }
             finally
             {
@@ -679,7 +753,14 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                    + Environment.NewLine
+                    + "Property Name : " + propertyName
+                );
             }
             finally
             {
@@ -701,7 +782,7 @@ namespace FrameworkDesktop
             Log.BeforeAction(new OrderedDictionary() {
                 { "webElement.description", this.description },
                 { "webElement.by", this.by },
-                { "Keys to Send", text }
+                { "Text", text }
             });
 
             // Perform the action
@@ -717,7 +798,14 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                    + Environment.NewLine
+                    + "Text : " + text
+                );
             }
             finally
             {
@@ -750,7 +838,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -788,7 +881,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -821,7 +919,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -860,7 +963,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -894,7 +1002,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -934,7 +1047,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -968,7 +1086,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1002,7 +1125,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1036,7 +1164,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1071,7 +1204,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1104,7 +1242,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1141,7 +1284,16 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                    + Environment.NewLine
+                    + "Attribute Name : " + attributeName
+                    + Environment.NewLine
+                    + "Attribute Value : " + attributeValue
+                );
             }
             finally
             {
@@ -1175,7 +1327,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1200,13 +1357,7 @@ namespace FrameworkDesktop
             {
                 // Wait for this element to exist
                 WebDriverWait wait = new WebDriverWait(this.driver, TimeSpan.FromSeconds(TestBase.defaultTimeoutInSeconds));
-                //wait.Until(ExpectedConditions.ElementExists(this.by));
-                //wait.Until<Func<IWebDriver, IWebElement>>(
-                //    d => {
-                //        return (driver) => { return driver.FindElement(by); };
-                //    }
-                wait.Until<IWebElement>(
-                    (driver) => { return driver.FindElement(by); });
+                wait.Until<IWebElement>((driver) => { return driver.FindElement(by); });
                 // Logging - After action success
                 Log.Success();
             }
@@ -1215,7 +1366,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1274,7 +1430,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1335,7 +1496,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1392,7 +1558,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1449,7 +1620,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1475,7 +1651,6 @@ namespace FrameworkDesktop
                 // Wait until the element is "visible"
                 TimeSpan timeout = TimeSpan.FromSeconds(TestBase.defaultTimeoutInSeconds);
                 WebDriverWait wait = new WebDriverWait(this.driver, timeout);
-                //wait.Until(ExpectedConditions.ElementIsVisible(this.by));
                 wait.Until<IWebElement>(
                     (driver) =>
                     {
@@ -1496,7 +1671,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1542,7 +1722,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
@@ -1601,7 +1786,12 @@ namespace FrameworkDesktop
                 // Logging - After action exception
                 Log.Failure(e.Message);
                 // Fail current test
-                Assert.Fail(e.Message);
+                Assert.Fail(e.Message
+                    + Environment.NewLine
+                    + "webElement.description : " + this.description
+                    + Environment.NewLine
+                    + "webElement.by : " + this.by
+                );
             }
             finally
             {
