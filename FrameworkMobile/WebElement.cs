@@ -1064,7 +1064,7 @@ namespace FrameworkMobile
                         + Environment.NewLine
                         + "webElement.description : " + this.description
                         + Environment.NewLine
-                        + "webElement.by" + this.by
+                        + "webElement.by : " + this.by
                     );
                 }
                 finally

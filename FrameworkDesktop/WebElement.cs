@@ -519,7 +519,7 @@ namespace FrameworkDesktop
         /// </summary>
         /// <param name="by">The locating mechanism to use.</param>
         /// <returns>The first matching WebElement on the current context.</returns>
-        public WebElement FindElement(By by)
+        public WebElement FindElement(By by, string description = "")
         {
             // Declare an empty object to hold the return value
             WebElement returnValue = null;
@@ -528,7 +528,8 @@ namespace FrameworkDesktop
             Log.BeforeAction(new OrderedDictionary() {
                 { "webElement.description", this.description },
                 { "webElement.by", this.by },
-                { "FindBy", by}
+                { "FindBy", by},
+                { "Description", description },
             });
 
             // Perform the action
@@ -555,6 +556,8 @@ namespace FrameworkDesktop
                     + "webElement.by : " + this.by
                     + Environment.NewLine
                     + "FindBy : " + by
+                    + Environment.NewLine
+                    + "Description : " + description
                 );
             }
             finally
@@ -572,7 +575,7 @@ namespace FrameworkDesktop
         /// </summary>
         /// <param name="by">The locating mechanism to use.</param>
         /// <returns>A ReadOnlyCollection of all WebElements matching the current criteria, or an empty list if nothing matches.</returns>
-        public IList<WebElement> FindElements(By by)
+        public IList<WebElement> FindElements(By by, string description = "")
         {
             // Declare an empty object to hold the return value
             IList<WebElement> returnValue = new List<WebElement>();
@@ -581,7 +584,8 @@ namespace FrameworkDesktop
             Log.BeforeAction(new OrderedDictionary() {
                 { "webElement.description", this.description },
                 { "webElement.by", this.by },
-                { "FindBy", by }
+                { "FindBy", by },
+                { "Description", description },
             });
 
             // Perform the action
@@ -614,6 +618,8 @@ namespace FrameworkDesktop
                     + "webElement.by : " + this.by
                     + Environment.NewLine
                     + "FindBy : " + by
+                    + Environment.NewLine
+                    + "Description : " + description
                 );
             }
             finally

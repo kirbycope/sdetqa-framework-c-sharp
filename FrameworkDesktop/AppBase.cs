@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace FrameworkDesktop
 {
@@ -187,14 +188,15 @@ namespace FrameworkDesktop
         /// </summary>
         /// <param name="by">The locating mechanism to use.</param>
         /// <returns>A List of initialized WebElement objects.</returns>
-        public static IList<WebElement> FindElements(By by)
+        public static IList<WebElement> FindElements(By by, string description = "")
         {
             // Declare an empty object to hold the return value
             IList<WebElement> returnValue = new List<WebElement>();
 
             // Log Before Action
             Log.BeforeAction(new OrderedDictionary() {
-                { "FindBy", by }
+                { "FindBy", by },
+                { "Description", description },
             });
 
             // Perform the action
@@ -223,6 +225,8 @@ namespace FrameworkDesktop
                 Assert.Fail(e.Message
                     + Environment.NewLine
                     + "FindBy : " + by
+                    + Environment.NewLine
+                    + "Description : " + description
                 );
             }
             finally
@@ -618,6 +622,32 @@ namespace FrameworkDesktop
         #endregion OpenQA.Selenium.IWebDriver Replacement Methods
 
         #region Custom App Methods
+
+        /// <summary>
+        /// Check that all given elements are present and have some dimensions greater than 0
+        /// </summary>
+        public static string CheckAllElementsArePresent(List<WebElement> elementList)
+        {
+            // Initialize the error counter
+            int errorCount = 0;
+            // Initialize the error string builder
+            StringBuilder sb = new StringBuilder();
+            // Loop over each element in the list
+            foreach (WebElement element in elementList)
+            {
+                // Find the element(s)
+                IList<WebElement> result = AppBase.FindElements(element.by);
+                // Handle the result
+                if (result.Count == 0)
+                {
+                    sb.AppendLine("[ERROR] Could not find element");
+                    if (element.by != null) { sb.AppendLine("    [DEBUG] Element Description: " + element.description); }
+                    if (element.by != null) { sb.AppendLine("    [DEBUG] Element Finds By: " + element.by); }
+                    errorCount++;
+                }
+            }
+            return sb.ToString();
+        }
 
         /// Injects a link on the current page and then clicks on that link (which opens a new tab).
         /// </summary>
